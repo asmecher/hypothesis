@@ -5,22 +5,39 @@
 
 About
 -----
-This plugin adds Hypothes.is integration to the public article view of OJS, permitting annotation and commenting.
+This plugin adds Hypothes.is integration to the public article view of OJS,
+permitting annotation and commenting.
 
 License
 -------
-This plugin is licensed under the GNU General Public License v2. See the file COPYING for the complete terms of this license.
+This plugin is licensed under the GNU General Public License v2. See the file
+COPYING for the complete terms of this license.
 
 System Requirements
 -------------------
-This plugin has been developed for OJS 3.0.x and may not work with other versions.
+This plugin has been developed for OJS 3.0.x and may not work with other
+versions.
 
 Installation
 ------------
 To install the plugin:
- - Using the Journal Manager's "system plugins" area, upload the plugin .tar.gz file into OJS.
+ - Using the Journal Manager's "system plugins" area, upload the plugin .tar.gz
+   file into OJS.
  - as Journal Manager, go into the "System Plugins" page and enable the plugin.
- - Read an article in the public reader interface of OJS and verify that the Hypothes.is tool is embedded.
+ - Read an HTML article in the public reader interface of OJS and verify that
+   the Hypothes.is tool is embedded.
+
+In order to support Hypothes.is with OJS's PDF.js-based PDF reader, you'll need
+to apply a patch to the version of PDF.js that's included in that plugin. The
+patch is currently available at:
+
+https://github.com/hypothesis/pdf.js-hypothes.is/commit/ab3f25
+
+To apply it...
+
+    cd plugins/generic/pdfJsViewer/pdf.js
+    patch -p2 < /path/to/ab3f25.diff
+
 
 Contact/Support
 ---------------
