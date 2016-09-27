@@ -26,7 +26,7 @@ class HypothesisPlugin extends GenericPlugin {
 	 */
 	function register($category, $path) {
 		if (parent::register($category, $path)) {
-			HookRegistry::register('TemplateManager::display',array(&$this, 'callback'));
+			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
 			return true;
 		}
 		return false;
@@ -39,24 +39,13 @@ class HypothesisPlugin extends GenericPlugin {
 	 * @return boolean
 	 */
 	function callback($hookName, $args) {
-		// Only pages requests interest us here
-		$request =& Registry::get('request');
-		if (!is_a($request->getRouter(), 'PKPPageRouter')) return null;
+		$galley =& $args[1];
+		if (!$galley || $galley->getFileType() != 'text/html') return false;
 
-		$page = Request::getRequestedPage();
-		$op = Request::getRequestedOp();
+		ob_start(function($buffer) {
+			return str_replace('<head>', '<head><script async defer src="//hypothes.is/embed.js"></script>', $buffer);
+		});
 
-		switch ("$page/$op") {
-			case 'article/view':
-				$templateManager =& $args[0];
-				$additionalHeadData = $templateManager->get_template_vars('additionalHeadData');
-				$templateManager->assign(
-					'additionalHeadData',
-					$templateManager->get_template_vars('additionalHeadData') .
-					'<script async defer src="//hypothes.is/embed.js"></script>'
-				);
-				break;
-		}
 		return false;
 	}
 
