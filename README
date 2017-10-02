@@ -8,6 +8,9 @@ About
 This plugin adds Hypothes.is integration to the public article view of OJS,
 permitting annotation and commenting.
 
+It currently supports commenting on HTML galleys. For PDF support, see the note
+below.
+
 License
 -------
 This plugin is licensed under the GNU General Public License v2. See the file
@@ -20,7 +23,11 @@ versions.
 
 Installation
 ------------
-To install the plugin:
+This plugin is probably available for quick installation in the OJS Plugin
+Gallery. To install it there, go to Settings > Website > Plugins and open the
+Plugin Gallery.
+
+If you cannot use the Plugin Gallery, you can also install the plugin as follows:
  - Using the Journal Manager's "system plugins" area, upload the plugin .tar.gz
    file into OJS.
  - as Journal Manager, go into the "System Plugins" page and enable the plugin.
