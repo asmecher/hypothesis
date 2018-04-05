@@ -13,8 +13,8 @@
 <version>
 	<application>hypothesis</application>
 	<type>plugins.generic</type>
-	<release>1.0.0.0</release>
-	<date>2015-09-04</date>
+	<release>1.0.1.0</release>
+	<date>2018-04-04</date>
 	<lazy-load>1</lazy-load>
 	<class>HypothesisPlugin</class>
 </version>
