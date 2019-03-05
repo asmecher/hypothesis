@@ -18,14 +18,10 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
-	 * Register the plugin, if enabled; note that this plugin
-	 * runs under both Journal and Site contexts.
-	 * @param $category string
-	 * @param $path string
-	 * @return boolean
+	 * @copydoc Plugin::register()
 	 */
-	function register($category, $path) {
-		if (parent::register($category, $path)) {
+	function register($category, $path, $mainContextId = null) {
+		if (parent::register($category, $path, $mainContextId)) {
 			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
 			return true;
 		}
