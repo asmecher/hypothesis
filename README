@@ -35,15 +35,9 @@ If you cannot use the Plugin Gallery, you can also install the plugin as follows
    the Hypothes.is tool is embedded.
 
 In order to support Hypothes.is with OJS's PDF.js-based PDF reader, you'll need
-to apply a patch to the version of PDF.js that's included in that plugin. The
-patch is currently available at:
-
-https://github.com/hypothesis/pdf.js-hypothes.is/commit/ab3f25
-
-To apply it...
-
-    cd plugins/generic/pdfJsViewer/pdf.js
-    patch -p2 < /path/to/ab3f25.diff
+to make a change to the PDF.js Viewer plugin. To do this, replace the pdf.js
+implementation in plugins/generic/pdfJsViewer/pdf.js with the one from this
+repository: https://github.com/hypothesis/pdf.js-hypothes.is
 
 
 Contact/Support
