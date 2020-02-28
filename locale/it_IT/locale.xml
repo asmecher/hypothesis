@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
+
+<!--
+  * plugins/generic/hypothesis/locale/it_IT/locale.xml
+  *
+  * Copyright (c) 2013-2018 Simon Fraser University
+  * Copyright (c) 2003-2018 John Willinsky
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * Localization strings
+  -->
+
+<locale name="it_IT" full_name="Italiano">
+	<message key="plugins.generic.hypothesis.name">Plugin Hypothes.is</message>
+	<message key="plugins.generic.hypothesis.description">Questo plugin permette l'integrazione di Hypothes.is nelle viste degli articoli di OJS per l'annotazione e il commento del lettore.</messsage>
+</locale>
