@@ -18,7 +18,7 @@ COPYING for the complete terms of this license.
 
 System Requirements
 -------------------
-This plugin has been developed for OJS 3.0.x and may not work with other
+This plugin has been developed for OJS 3.1.2 and may not work with other
 versions.
 
 Installation
@@ -34,17 +34,8 @@ If you cannot use the Plugin Gallery, you can also install the plugin as follows
  - Read an HTML article in the public reader interface of OJS and verify that
    the Hypothes.is tool is embedded.
 
-In order to support Hypothes.is with OJS's PDF.js-based PDF reader, you'll need
-to apply a patch to the version of PDF.js that's included in that plugin. The
-patch is currently available at:
-
-https://github.com/hypothesis/pdf.js-hypothes.is/commit/ab3f25
-
-To apply it...
-
-    cd plugins/generic/pdfJsViewer/pdf.js
-    patch -p2 < /path/to/ab3f25.diff
-
+In order to support Hypothes.is with OJS's PDF.js-based PDF reader, this plugin
+hijacks the template display of the pdfJsViewer plugin.
 
 Contact/Support
 ---------------

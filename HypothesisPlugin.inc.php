@@ -27,6 +27,7 @@ class HypothesisPlugin extends GenericPlugin {
 	function register($category, $path) {
 		if (parent::register($category, $path)) {
 			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
+			HookRegistry::register('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
 			return true;
 		}
 		return false;
@@ -47,6 +48,33 @@ class HypothesisPlugin extends GenericPlugin {
 		});
 
 		return false;
+	}
+
+	/**
+	 * Hook callback function for TemplateManager::display
+	 * @param $hookName string
+	 * @param $args array
+	 * @return boolean
+	 */
+	function callbackTemplateDisplay($hookName, $args) {
+		if ($hookName != 'TemplateManager::display') return false;
+		$templateMgr = $args[0];
+		$template = $args[1];
+		if ($template == 'plugins-plugins-generic-pdfJsViewer-generic-pdfJsViewer:articleGalley.tpl') {
+			$templateMgr->registerFilter("output", array($this, 'changePdfjsPath'));
+		}
+		return false;
+	}
+
+	/**
+	 * Output filter to create a new element in a registration form
+	 * @param $output string
+	 * @param $templateMgr TemplateManager
+	 * @return $string
+	 */
+	function changePdfjsPath($output, $templateMgr) {
+		$newOutput = str_replace('pdfJsViewer/pdf.js/web/viewer.html?file=', 'hypothesis/pdf.js/viewer/web/viewer.html?file=', $output);
+		return $newOutput;
 	}
 
 	/**
