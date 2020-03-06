@@ -54,7 +54,10 @@ class HypothesisPlugin extends GenericPlugin {
 		if ($hookName != 'TemplateManager::display') return false;
 		$templateMgr = $args[0];
 		$template = $args[1];
-		if ($template == 'plugins-plugins-generic-pdfJsViewer-generic-pdfJsViewer:articleGalley.tpl') {
+		$plugin = 'plugins-generic-pdfJsViewer';
+		$tpl = 'submissionGalley.tpl';
+		// template path contains the plugin path, and ends with the tpl file
+		if (strpos($template, $plugin) !== false && strpos($template, ':'.$tpl,  -1 - strlen($tpl)) !== false) {
 			$templateMgr->registerFilter("output", array($this, 'changePdfjsPath'));
 		}
 		return false;
