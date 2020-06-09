@@ -13,7 +13,7 @@
 <version>
 	<application>hypothesis</application>
 	<type>plugins.generic</type>
-	<release>1.0.3</release>
+	<release>1.0.3.1</release>
 	<date>2020-06-09</date>
 	<lazy-load>1</lazy-load>
 	<class>HypothesisPlugin</class>
