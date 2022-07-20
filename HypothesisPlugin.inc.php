@@ -13,6 +13,7 @@
 
 
 import('lib.pkp.classes.plugins.GenericPlugin');
+import('plugins.generic.hypothesis.classes.HypothesisClient');
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
@@ -55,12 +56,16 @@ class HypothesisPlugin extends GenericPlugin {
 		$templateMgr = $args[0];
 		$template = $args[1];
 		$plugin = 'plugins-generic-pdfJsViewer';
-		$submissiontpl = 'submissionGalley.tpl';
-		$issuetpl = 'issueGalley.tpl';
-		
+		$submissionGalleyTpl = 'submissionGalley.tpl';
+		$issueGalleyTpl = 'issueGalley.tpl';
+		$preprintTpl = 'preprint.tpl';
+
 		// template path contains the plugin path, and ends with the tpl file
-		if ( (strpos($template, $plugin) !== false) && (  (strpos($template, ':'.$submissiontpl,  -1 - strlen($submissiontpl)) !== false)  ||  (strpos($template, ':'.$issuetpl,  -1 - strlen($issuetpl)) !== false))) {
+		if ( (strpos($template, $plugin) !== false) && (  (strpos($template, ':'.$submissionGalleyTpl,  -1 - strlen($submissionGalleyTpl)) !== false)  ||  (strpos($template, ':'.$issueGalleyTpl,  -1 - strlen($issueGalleyTpl)) !== false))) {
 			$templateMgr->registerFilter("output", array($this, 'changePdfjsPath'));
+		}
+		else if (strpos($template, $preprintTpl, -1 - strlen($preprintTpl)) !== false) {
+			$templateMgr->registerFilter("output", array($this, 'addViewerNumberAnnotations'));
 		}
 		return false;
 	}
@@ -74,6 +79,24 @@ class HypothesisPlugin extends GenericPlugin {
 	function changePdfjsPath($output, $templateMgr) {
 		$newOutput = str_replace('pdfJsViewer/pdf.js/web/viewer.html?file=', 'hypothesis/pdf.js/viewer/web/viewer.html?file=', $output);
 		return $newOutput;
+	}
+
+	function addViewerNumberAnnotations($output, $templateMgr) {
+		$publication = $templateMgr->get_template_vars('publication');
+		$galleys = $publication->getData('galleys');
+		$annotationNumbers = [];
+
+		$hypothesisClient = new HypothesisClient();
+
+		foreach($galleys as $galley) {
+			$annotationNumbers[] = $hypothesisClient->getGalleyAnnotationsNumber($galley);
+		}
+
+		// assign annotationNumbers no templateMgr
+		// adiciona nosos template ao output (provavelmente um script js)
+
+		$templateMgr->unregisterFilter('output', array($this, 'addViewerNumberAnnotations'));
+		return $output;
 	}
 
 	/**
