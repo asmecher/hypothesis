@@ -18,3 +18,9 @@ msgstr ""
 
 msgid "plugins.generic.hypothesis.name"
 msgstr "Plugin Hypothes.is"
+
+msgid "plugins.generic.hypothesis.annotation"
+msgstr "anotação"
+
+msgid "plugins.generic.hypothesis.annotations"
+msgstr "anotações"

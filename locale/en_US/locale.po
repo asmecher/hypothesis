@@ -16,3 +16,9 @@ msgstr "Hypothes.is Plugin"
 
 msgid "plugins.generic.hypothesis.description"
 msgstr "This plugin enables Hypothes.is integration into OJS article views for reader annotation and commenting."
+
+msgid "plugins.generic.hypothesis.annotation"
+msgstr "annotation"
+
+msgid "plugins.generic.hypothesis.annotations"
+msgstr "annotations"

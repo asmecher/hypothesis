@@ -124,5 +124,9 @@ class HypothesisPlugin extends GenericPlugin {
 	function getDescription() {
 		return __('plugins.generic.hypothesis.description');
 	}
+
+	function getStyleSheet() {
+		return $this->getPluginPath() . '/styles/annotationViewer.css';
+	}
 }
 

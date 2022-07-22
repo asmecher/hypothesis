@@ -1,0 +1,14 @@
+.annotation_viewer_li {
+    display: block !important;
+    margin-top: 8px;
+}
+
+.annotation_viewer_span {
+    padding: 4px 8px;
+    border: 1px solid rgba(0,0,0,0.54);
+    border-radius: 15px;
+    line-height: 20px;
+    font-size: 14px;
+    margin-top: 1em;
+    margin-left: 0.25em;
+}
