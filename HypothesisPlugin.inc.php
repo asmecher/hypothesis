@@ -82,21 +82,31 @@ class HypothesisPlugin extends GenericPlugin {
 	}
 
 	function addViewerNumberAnnotations($output, $templateMgr) {
-		$publication = $templateMgr->get_template_vars('publication');
+		if (preg_match('/<div[^>]+class="item galleys/', $output, $matches, PREG_OFFSET_CAPTURE)) {
+			$posMatch = $matches[0][1];
+			$publication = $templateMgr->get_template_vars('publication');
+			$templateMgr->assign('annotationNumbers', $this->getPublicationAnnotationNumbers($publication));		
+			$annotationViewerTpl = $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
+	
+			$ulEndTag = "</ul>";
+			$posToInsert = strpos($output, $ulEndTag, $posMatch);
+			$output = substr_replace($output, $annotationViewerTpl, $posToInsert + strlen($ulEndTag), 0);
+
+			$templateMgr->unregisterFilter('output', array($this, 'addViewerNumberAnnotations'));
+		}
+		return $output;
+	}
+
+	private function getPublicationAnnotationNumbers($publication) {
 		$galleys = $publication->getData('galleys');
 		$annotationNumbers = [];
 
 		$hypothesisClient = new HypothesisClient();
-
 		foreach($galleys as $galley) {
 			$annotationNumbers[] = $hypothesisClient->getGalleyAnnotationsNumber($galley);
 		}
 
-		// assign annotationNumbers no templateMgr
-		// adiciona nosos template ao output (provavelmente um script js)
-
-		$templateMgr->unregisterFilter('output', array($this, 'addViewerNumberAnnotations'));
-		return $output;
+		return $annotationNumbers;
 	}
 
 	/**
