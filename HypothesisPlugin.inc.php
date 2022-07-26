@@ -93,7 +93,7 @@ class HypothesisPlugin extends GenericPlugin {
 		$galley = $args[0]['galley'];
 		
 		$hypothesisClient = new HypothesisClient();
-		$annotationsNumber = 2;//$hypothesisClient->getGalleyAnnotationsNumber($galley);
+		$annotationsNumber = $hypothesisClient->getGalleyAnnotationsNumber($galley);
 
 		if($annotationsNumber > 0) {
 			$templateMgr->assign('annotationsNumber', $annotationsNumber);
