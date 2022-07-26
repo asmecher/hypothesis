@@ -23,6 +23,16 @@ class HypothesisPlugin extends GenericPlugin {
 		if (parent::register($category, $path, $mainContextId)) {
 			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
 			HookRegistry::register('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
+			HookRegistry::register('Hypothesis::annotationNumber', array(&$this, 'addAnnotationNumberViewer'));
+			
+			$request = PKPApplication::get()->getRequest();
+			$templateMgr = TemplateManager::getManager($request);
+			$templateMgr->addStyleSheet(
+				'Hypothesis',
+				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/annotationViewer.css',
+				['contexts' => ['frontend']]
+			);
+
 			return true;
 		}
 		return false;
@@ -58,14 +68,10 @@ class HypothesisPlugin extends GenericPlugin {
 		$plugin = 'plugins-generic-pdfJsViewer';
 		$submissionGalleyTpl = 'submissionGalley.tpl';
 		$issueGalleyTpl = 'issueGalley.tpl';
-		$preprintTpl = 'preprint.tpl';
 
 		// template path contains the plugin path, and ends with the tpl file
 		if ( (strpos($template, $plugin) !== false) && (  (strpos($template, ':'.$submissionGalleyTpl,  -1 - strlen($submissionGalleyTpl)) !== false)  ||  (strpos($template, ':'.$issueGalleyTpl,  -1 - strlen($issueGalleyTpl)) !== false))) {
 			$templateMgr->registerFilter("output", array($this, 'changePdfjsPath'));
-		}
-		else if (strpos($template, $preprintTpl, -1 - strlen($preprintTpl)) !== false) {
-			$templateMgr->registerFilter("output", array($this, 'addViewerNumberAnnotations'));
 		}
 		return false;
 	}
@@ -81,32 +87,20 @@ class HypothesisPlugin extends GenericPlugin {
 		return $newOutput;
 	}
 
-	function addViewerNumberAnnotations($output, $templateMgr) {
-		if (preg_match('/<div[^>]+class="item galleys/', $output, $matches, PREG_OFFSET_CAPTURE)) {
-			$posMatch = $matches[0][1];
-			$publication = $templateMgr->get_template_vars('publication');
-			$templateMgr->assign('annotationNumbers', $this->getPublicationAnnotationNumbers($publication));		
-			$annotationViewerTpl = $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
-	
-			$ulEndTag = "</ul>";
-			$posToInsert = strpos($output, $ulEndTag, $posMatch);
-			$output = substr_replace($output, $annotationViewerTpl, $posToInsert + strlen($ulEndTag), 0);
-
-			$templateMgr->unregisterFilter('output', array($this, 'addViewerNumberAnnotations'));
-		}
-		return $output;
-	}
-
-	private function getPublicationAnnotationNumbers($publication) {
-		$galleys = $publication->getData('galleys');
-		$annotationNumbers = [];
-
+	public function addAnnotationNumberViewer($hookName, $args) {
+		$templateMgr = $args[1];
+		$output =& $args[2];
+		$galley = $args[0]['galley'];
+		
 		$hypothesisClient = new HypothesisClient();
-		foreach($galleys as $galley) {
-			$annotationNumbers[] = $hypothesisClient->getGalleyAnnotationsNumber($galley);
+		$annotationsNumber = 2;//$hypothesisClient->getGalleyAnnotationsNumber($galley);
+
+		if($annotationsNumber > 0) {
+			$templateMgr->assign('annotationsNumber', $annotationsNumber);
+			$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
 		}
 
-		return $annotationNumbers;
+		return false;
 	}
 
 	/**
