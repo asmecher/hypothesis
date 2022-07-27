@@ -13,7 +13,6 @@
 
 
 import('lib.pkp.classes.plugins.GenericPlugin');
-import('plugins.generic.hypothesis.classes.HypothesisClient');
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
@@ -92,16 +91,24 @@ class HypothesisPlugin extends GenericPlugin {
 		$output =& $args[2];
 		$galley = $args[0]['galley'];
 		
-		$hypothesisClient = new HypothesisClient();
-		$annotationsNumber = $hypothesisClient->getGalleyAnnotationsNumber($galley);
-
-		if($annotationsNumber > 0) {
-			$templateMgr->assign('annotationsNumber', $annotationsNumber);
-			$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
-		}
+		$templateMgr->assign('galleyDownloadURL', $this->getGalleyDownloadURL($galley));
+		$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
 
 		return false;
 	}
+
+	private function getGalleyDownloadURL($galley) {
+        $request = Application::get()->getRequest();
+        $indexUrl = $request->getIndexUrl();
+        $contextPath = $request->getContext()->getPath();
+        
+        $submissionFile = $galley->getFile();
+        $submissionId = $submissionFile->getData('submissionId');
+        $assocId = $submissionFile->getData('assocId');
+        $submissionFileId = $submissionFile->getId();
+        
+        return $indexUrl . "/$contextPath/preprint/download/$submissionId/$assocId/$submissionFileId";
+    }
 
 	/**
 	 * Get the display name of this plugin
