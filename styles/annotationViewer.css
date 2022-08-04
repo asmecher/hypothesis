@@ -2,12 +2,12 @@
     margin-right: 0.25em;
 }
 
-.annotation_viewer {
+li[class^="annotation_viewer-"] {
     margin-top: 8px;
     visibility: hidden;
 }
 
-.annotation_viewer > span {
+li[id^="annotation_viewer-"] > a[class^="obj_galley_link"] {
     padding: 4px 8px;
     border: 1px solid rgba(0,0,0,0.54);
     border-radius: 15px;

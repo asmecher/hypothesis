@@ -1,5 +1,5 @@
-<li class="annotation_viewer">
-    <span id="annotation_viewer_span-{$galley->getId()}"></span>
+<li id="annotation_viewer-{$galley->getId()}">
+    {include file="frontend/objects/galley_link.tpl" parent=$preprint publication=$publication galley=$galley}
 </li>
 
 <script>
@@ -8,12 +8,14 @@
             'https://hypothes.is/api/search?limit=0&group=__world__&uri={$galleyDownloadURL}',
             function(response) {ldelim}
                 if(response['total'] > 0) {ldelim}
-                    const viewerSpan = document.getElementById('annotation_viewer_span-{$galley->getId()}');
+                    const viewer = document.getElementById('annotation_viewer-{$galley->getId()}');
+                    const galleyLink = viewer.getElementsByTagName('a')[0];
                     if(response['total'] == 1)
-                        viewerSpan.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotation"}';
+                        galleyLink.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotation"}';
                     else
-                        viewerSpan.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotations"}';
-                    viewerSpan.parentNode.style.visibility = 'visible';
+                        galleyLink.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotations"}';
+                    galleyLink.href = galleyLink.href + '?hasAnnotations=true';
+                    viewer.style.visibility = 'visible';
                 {rdelim}
             {rdelim}
         );
