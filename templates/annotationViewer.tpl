@@ -1,21 +1,28 @@
-<li id="annotation_viewer-{$galley->getId()}">
-    {include file="frontend/objects/galley_link.tpl" parent=$preprint publication=$publication galley=$galley}
+<li class="annotation_viewer">
+    <a id="annotation_viewer_link-{$galley->getId()}"></a>
 </li>
 
 <script>
+    function getAnnotationMsg(response) {ldelim}
+        if(response['total'] == 1)
+            return response['total'] + ' {translate key="plugins.generic.hypothesis.annotation"}';
+        
+        return response['total'] + ' {translate key="plugins.generic.hypothesis.annotations"}';
+    {rdelim}
+    
     $(function(){ldelim}
         $.get(
             'https://hypothes.is/api/search?limit=0&group=__world__&uri={$galleyDownloadURL}',
             function(response) {ldelim}
                 if(response['total'] > 0) {ldelim}
-                    const viewer = document.getElementById('annotation_viewer-{$galley->getId()}');
-                    const galleyLink = viewer.getElementsByTagName('a')[0];
-                    if(response['total'] == 1)
-                        galleyLink.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotation"}';
-                    else
-                        galleyLink.textContent = response['total'] + ' {translate key="plugins.generic.hypothesis.annotations"}';
+                    const viewerButton = document.getElementById('annotation_viewer_link-{$galley->getId()}');
+                    const viewerLi = viewerButton.parentNode;
+                    viewerButton.textContent = getAnnotationMsg(response);
+                    
+                    const galleyLink = viewerLi.previousElementSibling.getElementsByTagName('a')[0];
                     galleyLink.href = galleyLink.href + '?hasAnnotations=true';
-                    viewer.style.visibility = 'visible';
+                    viewerButton.href = galleyLink.href;
+                    viewerLi.style.visibility = 'visible';
                 {rdelim}
             {rdelim}
         );

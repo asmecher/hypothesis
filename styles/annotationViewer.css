@@ -2,16 +2,20 @@
     margin-right: 0.25em;
 }
 
-li[class^="annotation_viewer-"] {
-    margin-top: 8px;
+.annotation_viewer {
+    margin: 0.5em 0 1em;
     visibility: hidden;
 }
 
-li[id^="annotation_viewer-"] > a[class^="obj_galley_link"] {
+.annotation_viewer > a {
     padding: 4px 8px;
     border: 1px solid rgba(0,0,0,0.54);
     border-radius: 15px;
+    color: rgba(0,0,0,0.54);
     line-height: 20px;
     font-size: 14px;
-    margin-top: 1em;
+}
+
+.annotation_viewer > a:hover {
+    color: rgba(0,0,0,0.54);
 }
