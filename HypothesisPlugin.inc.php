@@ -24,7 +24,8 @@ class HypothesisPlugin extends GenericPlugin {
 			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
 			HookRegistry::register('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
 			HookRegistry::register('Hypothesis::annotationNumber', array(&$this, 'addAnnotationNumberViewer'));
-			
+			HookRegistry::register('LoadHandler', array($this, 'setAnnotationsPageHandler'));
+
 			$request = PKPApplication::get()->getRequest();
 			$templateMgr = TemplateManager::getManager($request);
 			$templateMgr->addStyleSheet(
@@ -108,6 +109,16 @@ class HypothesisPlugin extends GenericPlugin {
 		$templateMgr->assign('galleyDownloadURL', $hypothesisHandler->getGalleyDownloadURL($galley));
 		$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
 
+		return false;
+	}
+
+	public function setAnnotationsPageHandler($hookName, $args) {
+		$page = $args[0];
+		if ($page === 'annotationspage') {
+			$this->import('classes.AnnotationsPageHandler');
+			define('HANDLER_CLASS', 'AnnotationsPageHandler');
+			return true;
+		}
 		return false;
 	}
 
