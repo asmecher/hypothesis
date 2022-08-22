@@ -37,6 +37,9 @@ class HypothesisHandler {
         $contextPath = $request->getContext()->getPath();
         
         $submissionFile = $galley->getFile();
+        if(is_null($submissionFile))
+            return null;
+
         $submissionId = $submissionFile->getData('submissionId');
         $assocId = $submissionFile->getData('assocId');
         $submissionFileId = $submissionFile->getId();
