@@ -7,15 +7,13 @@ class HypothesisHandler {
             'contextId' => $contextId
         ]);
 
-        $submissions = iterator_to_array($submissions);
-        $groupSize = 50;
-        $submissionGroups = array_chunk($submissions, $groupSize);
+        $groupsRequests = $this->getSubmissionsGroupsRequests($submissions);
         $submissionsWithAnnotations = [];
-        
-        foreach ($submissionGroups as $submissionGroup) {
-            $groupResponse = $this->getSubmissionGroupAnnotations($submissionGroup);
+
+        foreach ($groupsRequests as $groupRequest) {
+            $groupResponse = $this->getRequestAnnotations($groupRequest);
             if (!is_null($groupResponse) && $groupResponse['total'] > 0) {
-                $submissionsWithAnnotations[] = array_merge(
+                $submissionsWithAnnotations = array_merge(
                     $submissionsWithAnnotations,
                     $this->getWhichSubmissionsHaveAnnotations($groupResponse)
                 );
@@ -25,27 +23,55 @@ class HypothesisHandler {
         return $submissionsWithAnnotations;
     }
 
-    private function getSubmissionGroupAnnotations($submissionGroup) {
-        $requestURL = "https://hypothes.is/api/search?limit=200&group=__world__";
-        foreach ($submissionGroup as $submission) {
-            $publication = $submission->getCurrentPublication();
-            $galleys = $publication->getData('galleys');
+    private function getSubmissionsGroupsRequests($submissions) {
+        $requests = [];
+        $requestPrefix = $currentRequest = "https://hypothes.is/api/search?limit=200&group=__world__";
+        $maxRequestLength = 4094;
 
-            foreach ($galleys as $galley) {
-                $galleyDownloadURL = $this->getGalleyDownloadURL($galley);
-                if(!is_null($galleyDownloadURL))
-                    $requestURL .= "&uri={$galleyDownloadURL}";
+        foreach ($submissions as $submission) {
+            $submissionRequestParams = $this->getSubmissionRequestParams($submission);
+
+            if(strlen($currentRequest.$submissionRequestParams) < $maxRequestLength) {
+                $currentRequest .= $submissionRequestParams;
+            }
+            else {
+                $requests[] = $currentRequest;
+                $currentRequest = $requestPrefix . $submissionRequestParams; 
             }
         }
 
-        return json_decode(file_get_contents($requestURL), true);
+        return $requests;
+    }
+
+    private function getSubmissionRequestParams($submission): string {
+        $submissionRequestParams = "";
+        $publication = $submission->getCurrentPublication();
+        $galleys = $publication->getData('galleys');
+
+        foreach ($galleys as $galley) {
+            $galleyDownloadURL = $this->getGalleyDownloadURL($galley);
+            if(!is_null($galleyDownloadURL))
+                $submissionRequestParams .= "&uri={$galleyDownloadURL}";
+        }
+
+        return $submissionRequestParams;
+    }
+    
+    private function getRequestAnnotations($requestURL) {
+        $ch = curl_init($requestURL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($ch);
+        if(!$output || substr($output, 1, 8) != '"total":') return null;
+
+        return json_decode($output, true);
     }
 
     private function getWhichSubmissionsHaveAnnotations($groupResponse) {
         $submissions = [];
 
         foreach ($groupResponse['rows'] as $annotation) {
-            $submissionId = (int) array_slice(explode("/", $annotation['uri']), -3, 1);
+            $urlBySlash = explode("/", $annotation['links']['incontext']);
+            $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
             $submissions[$submissionId] = $submissionId;
         }
 
