@@ -7,15 +7,20 @@ class HypothesisHandler {
             'contextId' => $contextId
         ]);
 
+        $newSubmissions = [];
+        foreach ($submissions as $submission) {
+            $newSubmissions[$submission->getId()] = $submission;
+        }
+        $submissions = $newSubmissions;
+
         $groupsRequests = $this->getSubmissionsGroupsRequests($submissions);
         $submissionsWithAnnotations = [];
-
         foreach ($groupsRequests as $groupRequest) {
             $groupResponse = $this->getRequestAnnotations($groupRequest);
             if (!is_null($groupResponse) && $groupResponse['total'] > 0) {
                 $submissionsWithAnnotations = array_merge(
                     $submissionsWithAnnotations,
-                    $this->getWhichSubmissionsHaveAnnotations($groupResponse)
+                    $this->getWhichSubmissionsHaveAnnotations($groupResponse, $submissions)
                 );
             }
         }
@@ -66,16 +71,16 @@ class HypothesisHandler {
         return json_decode($output, true);
     }
 
-    private function getWhichSubmissionsHaveAnnotations($groupResponse) {
-        $submissions = [];
+    private function getWhichSubmissionsHaveAnnotations($groupResponse, $submissions) {
+        $submissionsWithAnnotations = [];
 
         foreach ($groupResponse['rows'] as $annotation) {
             $urlBySlash = explode("/", $annotation['links']['incontext']);
             $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
-            $submissions[$submissionId] = $submissionId;
+            $submissionsWithAnnotations[$submissionId] = $submissions[$submissionId];
         }
 
-        return $submissions;
+        return $submissionsWithAnnotations;
     }
 
     public function getGalleyDownloadURL($galley) {
