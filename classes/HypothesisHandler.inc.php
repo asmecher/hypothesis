@@ -7,12 +7,6 @@ class HypothesisHandler {
             'contextId' => $contextId
         ]);
 
-        $newSubmissions = [];
-        foreach ($submissions as $submission) {
-            $newSubmissions[$submission->getId()] = $submission;
-        }
-        $submissions = $newSubmissions;
-
         $groupsRequests = $this->getSubmissionsGroupsRequests($submissions);
         $submissionsWithAnnotations = [];
         foreach ($groupsRequests as $groupRequest) {
@@ -20,7 +14,7 @@ class HypothesisHandler {
             if (!is_null($groupResponse) && $groupResponse['total'] > 0) {
                 $submissionsWithAnnotations = array_merge(
                     $submissionsWithAnnotations,
-                    $this->getWhichSubmissionsHaveAnnotations($groupResponse, $submissions)
+                    $this->getWhichSubmissionsHaveAnnotations($groupResponse)
                 );
             }
         }
@@ -71,13 +65,13 @@ class HypothesisHandler {
         return json_decode($output, true);
     }
 
-    private function getWhichSubmissionsHaveAnnotations($groupResponse, $submissions) {
+    private function getWhichSubmissionsHaveAnnotations($groupResponse) {
         $submissionsWithAnnotations = [];
 
         foreach ($groupResponse['rows'] as $annotation) {
             $urlBySlash = explode("/", $annotation['links']['incontext']);
             $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
-            $submissionsWithAnnotations[$submissionId] = $submissions[$submissionId];
+            $submissionsWithAnnotations[$submissionId] = $submissionId;
         }
 
         return $submissionsWithAnnotations;
