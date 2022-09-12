@@ -104,9 +104,11 @@ class HypothesisPlugin extends GenericPlugin {
 		$templateMgr = $args[1];
 		$output =& $args[2];
 		$galley = $args[0]['galley'];
+		$request = PKPApplication::get()->getRequest();
+		$contextId = $request->getContext()->getId();
 		
 		$hypothesisHandler = new HypothesisHandler();
-		$templateMgr->assign('galleyDownloadURL', $hypothesisHandler->getGalleyDownloadURL($galley));
+		$templateMgr->assign('galleyDownloadURL', $hypothesisHandler->getGalleyDownloadURL($galley, $contextId));
 		$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
 
 		return false;
@@ -114,7 +116,7 @@ class HypothesisPlugin extends GenericPlugin {
 
 	public function setAnnotationsPageHandler($hookName, $args) {
 		$page = $args[0];
-		if ($page === 'annotationspage') {
+		if ($page === 'annotations') {
 			$this->import('classes.AnnotationsPageHandler');
 			define('HANDLER_CLASS', 'AnnotationsPageHandler');
 			return true;
