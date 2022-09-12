@@ -7,7 +7,7 @@ class HypothesisHandler {
             'contextId' => $contextId
         ]);
 
-        $groupsRequests = $this->getSubmissionsGroupsRequests($submissions);
+        $groupsRequests = $this->getSubmissionsGroupsRequests($submissions, $contextId);
         $submissionsWithAnnotations = [];
         foreach ($groupsRequests as $groupRequest) {
             $groupResponse = $this->getRequestAnnotations($groupRequest);
@@ -22,13 +22,13 @@ class HypothesisHandler {
         return $submissionsWithAnnotations;
     }
 
-    private function getSubmissionsGroupsRequests($submissions) {
+    private function getSubmissionsGroupsRequests($submissions, $contextId) {
         $requests = [];
         $requestPrefix = $currentRequest = "https://hypothes.is/api/search?limit=200&group=__world__";
         $maxRequestLength = 4094;
 
         foreach ($submissions as $submission) {
-            $submissionRequestParams = $this->getSubmissionRequestParams($submission);
+            $submissionRequestParams = $this->getSubmissionRequestParams($submission, $contextId);
 
             if(strlen($currentRequest.$submissionRequestParams) < $maxRequestLength) {
                 $currentRequest .= $submissionRequestParams;
@@ -42,13 +42,13 @@ class HypothesisHandler {
         return $requests;
     }
 
-    private function getSubmissionRequestParams($submission): string {
+    private function getSubmissionRequestParams($submission, $contextId): string {
         $submissionRequestParams = "";
         $publication = $submission->getCurrentPublication();
         $galleys = $publication->getData('galleys');
 
         foreach ($galleys as $galley) {
-            $galleyDownloadURL = $this->getGalleyDownloadURL($galley);
+            $galleyDownloadURL = $this->getGalleyDownloadURL($galley, $contextId);
             if(!is_null($galleyDownloadURL))
                 $submissionRequestParams .= "&uri={$galleyDownloadURL}";
         }
@@ -77,10 +77,11 @@ class HypothesisHandler {
         return $submissionsWithAnnotations;
     }
 
-    public function getGalleyDownloadURL($galley) {
+    public function getGalleyDownloadURL($galley, $contextId) {
         $request = Application::get()->getRequest();
         $indexUrl = $request->getIndexUrl();
-        $contextPath = $request->getContext()->getPath();
+        $context = Services::get('context')->get($contextId);
+        $contextPath = $context->getPath();
         
         $submissionFile = $galley->getFile();
         if(is_null($submissionFile))
