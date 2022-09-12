@@ -24,3 +24,12 @@ msgstr "anotação"
 
 msgid "plugins.generic.hypothesis.annotations"
 msgstr "anotações"
+
+msgid "plugins.generic.hypothesis.annotationsPage"
+msgstr "Anotações"
+
+msgid "plugins.generic.hypothesis.annotationsPageNumber"
+msgstr "Anotações - Página {$pageNumber}"
+
+msgid "plugins.generic.hypothesis.noSubmissionsWithAnnotations"
+msgstr "Não há submissões com anotações"
