@@ -30,23 +30,28 @@ class HypothesisHandler {
         foreach ($submissions as $submission) {
             $submissionRequestParams = $this->getSubmissionRequestParams($submission, $contextId);
 
-            if(strlen($currentRequest.$submissionRequestParams) < $maxRequestLength) {
-                $currentRequest .= $submissionRequestParams;
-            }
-            else {
-                $requests[] = $currentRequest;
-                $currentRequest = $requestPrefix . $submissionRequestParams; 
+            if(!is_null($submissionRequestParams)) {
+                if(strlen($currentRequest.$submissionRequestParams) < $maxRequestLength) {
+                    $currentRequest .= $submissionRequestParams;
+                }
+                else {
+                    $requests[] = $currentRequest;
+                    $currentRequest = $requestPrefix . $submissionRequestParams; 
+                }
             }
         }
 
         return $requests;
     }
 
-    private function getSubmissionRequestParams($submission, $contextId): string {
+    private function getSubmissionRequestParams($submission, $contextId) {
         $submissionRequestParams = "";
         $publication = $submission->getCurrentPublication();
+        
+        if(is_null($publication))
+            return null;
+        
         $galleys = $publication->getData('galleys');
-
         foreach ($galleys as $galley) {
             $galleyDownloadURL = $this->getGalleyDownloadURL($galley, $contextId);
             if(!is_null($galleyDownloadURL))
