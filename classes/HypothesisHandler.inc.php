@@ -1,25 +1,27 @@
 <?php
 
+import('plugins.generic.hypothesis.classes.SubmissionAnnotations');
+
 class HypothesisHandler {
 
-    public function getSubmissionsWithAnnotations($contextId) {
+    public function getSubmissionsAnnotations($contextId) {
         $submissions = Services::get('submission')->getMany([
             'contextId' => $contextId
         ]);
 
         $groupsRequests = $this->getSubmissionsGroupsRequests($submissions, $contextId);
-        $submissionsWithAnnotations = [];
+        $submissionsAnnotations = [];
         foreach ($groupsRequests as $groupRequest) {
             $groupResponse = $this->getRequestAnnotations($groupRequest);
             if (!is_null($groupResponse) && $groupResponse['total'] > 0) {
-                $submissionsWithAnnotations = array_merge(
-                    $submissionsWithAnnotations,
-                    $this->getWhichSubmissionsHaveAnnotations($groupResponse)
+                $submissionsAnnotations = array_merge(
+                    $submissionsAnnotations,
+                    $this->groupSubmissionsAnnotations($groupResponse)
                 );
             }
         }
 
-        return $submissionsWithAnnotations;
+        return $submissionsAnnotations;
     }
 
     private function getSubmissionsGroupsRequests($submissions, $contextId) {
@@ -70,16 +72,21 @@ class HypothesisHandler {
         return json_decode($output, true);
     }
 
-    private function getWhichSubmissionsHaveAnnotations($groupResponse) {
-        $submissionsWithAnnotations = [];
+    private function groupSubmissionsAnnotations($groupResponse) {
+        $submissionsAnnotations = [];
 
         foreach ($groupResponse['rows'] as $annotation) {
             $urlBySlash = explode("/", $annotation['links']['incontext']);
             $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
-            $submissionsWithAnnotations[$submissionId] = $submissionId;
+
+            if(!array_key_exists($submissionId, $submissionsAnnotations)) {
+                $submissionsAnnotations[$submissionId] = new SubmissionAnnotations($submissionId);
+            }
+            
+            $submissionsAnnotations[$submissionId]->addAnnotation($annotation['text']);
         }
 
-        return $submissionsWithAnnotations;
+        return $submissionsAnnotations;
     }
 
     public function getGalleyDownloadURL($galley, $contextId) {
