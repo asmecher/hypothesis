@@ -13,13 +13,13 @@ class UpdateAnnotationsCache extends ScheduledTask {
             $cacheManager = CacheManager::getManager();
             $cache = $cacheManager->getFileCache(
                 $contextId,
-                'submissions_with_annotations',
+                'submissions_annotations',
                 [$this, 'cacheDismiss']
             );
 
             $cache->flush();
             $hypothesisHandler = new HypothesisHandler();
-			$cache->setEntireCache($hypothesisHandler->getSubmissionsWithAnnotations($contextId));
+			$cache->setEntireCache($hypothesisHandler->getSubmissionsAnnotations($contextId));
         }
 
 		return true;

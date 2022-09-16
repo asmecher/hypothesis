@@ -21,21 +21,22 @@ class AnnotationsPageHandler extends Handler {
         $itemsPerPage = $context->getData('itemsPerPage') ? $context->getData('itemsPerPage') : Config::getVar('interface', 'items_per_page');
 		$offset = $page > 1 ? ($page - 1) * $itemsPerPage : 0;
 
-        $submissionsWithAnnotations = $this->getSubmissionsWithAnnotations($context->getId());
-        $pageSubmissions = array_slice($submissionsWithAnnotations, $offset, $itemsPerPage);
+        $submissionsAnnotations = $this->getSubmissionsAnnotations($context->getId());
+        $pageAnnotations = array_slice($submissionsAnnotations, $offset, $itemsPerPage);
 
-        $total = count($submissionsWithAnnotations);
+        $total = count($submissionsAnnotations);
         $showingStart = $offset + 1;
-		$showingEnd = min($offset + $itemsPerPage, $offset + count($pageSubmissions));
+		$showingEnd = min($offset + $itemsPerPage, $offset + count($pageAnnotations));
 		$nextPage = $total > $showingEnd ? $page + 1 : null;
 		$prevPage = $showingStart > 1 ? $page - 1 : null;
 
-        foreach ($pageSubmissions as $index => $submissionId) {
-            $pageSubmissions[$index] = Services::get('submission')->get($submissionId);
+        foreach ($pageAnnotations as $submissionAnnotation) {
+            $submissionId = $submissionAnnotation->submissionId;
+            $submissionAnnotation->submission = Services::get('submission')->get($submissionId);
         }
 
         return [
-            'submissionsWithAnnotations' => $pageSubmissions,
+            'submissionsAnnotations' => $pageAnnotations,
             'showingStart' => $showingStart,
             'showingEnd' => $showingEnd,
             'total' => $total,
@@ -44,25 +45,24 @@ class AnnotationsPageHandler extends Handler {
         ];
     }
 
-    private function getSubmissionsWithAnnotations($contextId) {
+    private function getSubmissionsAnnotations($contextId) {
         $cacheManager = CacheManager::getManager();
 		$cache = $cacheManager->getFileCache(
 			$contextId,
-			'submissions_with_annotations',
+			'submissions_annotations',
 			[$this, 'cacheDismiss']
 		);
 
-        $submissionsWithAnnotations = $cache->getContents();
-		$currentCacheTime = time() - $cache->getCacheTime();
+        $submissionsAnnotations = $cache->getContents();
         
-		if (is_null($submissionsWithAnnotations)){
+		if (is_null($submissionsAnnotations)){
 			$cache->flush();
             $hypothesisHandler = new HypothesisHandler();
-			$cache->setEntireCache($hypothesisHandler->getSubmissionsWithAnnotations($contextId));
-            $submissionsWithAnnotations = $cache->getContents();
+			$cache->setEntireCache($hypothesisHandler->getSubmissionsAnnotations($contextId));
+            $submissionsAnnotations = $cache->getContents();
 		}
 
-        return $submissionsWithAnnotations;
+        return $submissionsAnnotations;
     }
 
     function cacheDismiss() {
