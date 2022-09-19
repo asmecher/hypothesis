@@ -5,6 +5,7 @@
 		{translate key="plugins.generic.hypothesis.annotationsPage"}
 	{/if}
 {/capture}
+<link rel="stylesheet" type="text/css" href="/plugins/generic/hypothesis/styles/annotationsPage.css">
 {include file="frontend/components/header.tpl" pageTitleTranslated=$pageTitle}
 
 <div class="page page_issue_archive">
@@ -18,7 +19,7 @@
 		<ul class="cmp_article_list articles">
 			{foreach from=$submissionsAnnotations item="submissionAnnotations"}
 				<li>
-					{include file="plugins/generic/hypothesis/templates/submissionAnnotations.tpl"}
+					{include file="../../../plugins/generic/hypothesis/templates/submissionAnnotations.tpl"}
 				</li>
 			{/foreach}
 		</ul>

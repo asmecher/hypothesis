@@ -1,0 +1,20 @@
+.submission_annotations {
+    background-color: #fafaf8;
+    padding: 10px 15px;
+    border-radius: 3px;
+}
+
+.submission_annotations > .title {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+}
+
+.submission_annotations > .annotation {
+    background-color: #FFF;
+    font-size: 14px;
+    margin: 10px 0 0 15px;
+    padding: 10px;
+    border-radius: 3px;
+    box-shadow: 0px 2px 3px 0 rgba(0,0,0,0.2);
+}
