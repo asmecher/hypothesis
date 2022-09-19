@@ -12,13 +12,13 @@
 
 	<h1>{$pageTitle|escape}</h1>
     
-	{if empty($submissionsWithAnnotations)}
+	{if empty($submissionsAnnotations)}
 		<p>{translate key="plugins.generic.hypothesis.noSubmissionsWithAnnotations"}</p>
 	{else}
 		<ul class="cmp_article_list articles">
-			{foreach from=$submissionsWithAnnotations item="preprint"}
+			{foreach from=$submissionsAnnotations item="submissionAnnotations"}
 				<li>
-					{include file="frontend/objects/preprint_summary.tpl"}
+					{include file="plugins/generic/hypothesis/templates/submissionAnnotations.tpl"}
 				</li>
 			{/foreach}
 		</ul>

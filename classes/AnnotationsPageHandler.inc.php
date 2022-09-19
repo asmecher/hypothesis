@@ -13,7 +13,7 @@ class AnnotationsPageHandler extends Handler {
 
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign($paginationParams);
-        return $templateMgr->display($plugin->getTemplateResource('submissionsWithAnnotations.tpl'));
+        return $templateMgr->display($plugin->getTemplateResource('annotationsPage.tpl'));
     }
 
     private function getPaginationParams($args, $context): array {
