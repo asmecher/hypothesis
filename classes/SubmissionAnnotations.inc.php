@@ -1,5 +1,7 @@
 <?php
 
+import('plugins.generic.hypothesis.classes.Annotation');
+
 class SubmissionAnnotations {
     public $submissionId;
     public $submission;
@@ -16,7 +18,7 @@ class SubmissionAnnotations {
         return $obj;
     }
 
-    public function addAnnotation(string $annotation) {
+    public function addAnnotation(Annotation $annotation) {
         $this->annotations[] = $annotation;
     }
 }
