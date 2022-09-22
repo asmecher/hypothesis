@@ -15,7 +15,16 @@
 	</div>
 	{foreach from=$annotations item="annotation"}
 		<div class="annotation">
-			"{$annotation|escape}"
+			<div class="annotation_header">
+				<strong>{$annotation->user}</strong>
+				<span>{$annotation->dateCreated|date_format:$dateFormatLong}</span>
+			</div>
+			<blockquote class="annotation_target">
+				{$annotation->target}
+			</blockquote>
+			<span class="annotation_content">
+				{$annotation->content}
+			</span>
 		</div>
 	{/foreach}
 </div>
