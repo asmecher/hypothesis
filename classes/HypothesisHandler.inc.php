@@ -75,18 +75,37 @@ class HypothesisHandler {
     private function groupSubmissionsAnnotations($groupResponse) {
         $submissionsAnnotations = [];
 
-        foreach ($groupResponse['rows'] as $annotation) {
-            $urlBySlash = explode("/", $annotation['links']['incontext']);
+        foreach ($groupResponse['rows'] as $annotationResponse) {
+            $urlBySlash = explode("/", $annotationResponse['links']['incontext']);
             $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
 
             if(!array_key_exists($submissionId, $submissionsAnnotations)) {
                 $submissionsAnnotations[$submissionId] = new SubmissionAnnotations($submissionId);
             }
             
-            $submissionsAnnotations[$submissionId]->addAnnotation($annotation['text']);
+            $annotation = $this->getAnnotation($annotationResponse);
+            $submissionsAnnotations[$submissionId]->addAnnotation($annotation);
         }
 
         return $submissionsAnnotations;
+    }
+
+    private function getAnnotation($annotationResponse): Annotation {
+        $user = substr($annotationResponse['user'], 5, strlen($annotationResponse['user']) - 17);
+        $dateCreated = $annotationResponse['created'];
+        $content = $annotationResponse['text'];
+        
+        $target = "";
+        if(isset($annotationResponse['target'][0]['selector'])) {
+            foreach ($annotationResponse['target'][0]['selector'] as $selector) {
+                if($selector['type'] == 'TextQuoteSelector') {
+                    $target = $selector['exact'];
+                    break;
+                }
+            }
+        }
+        
+        return new Annotation($user, $dateCreated, $target, $content);
     }
 
     public function getGalleyDownloadURL($galley, $contextId) {
