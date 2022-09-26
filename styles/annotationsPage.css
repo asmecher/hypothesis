@@ -20,7 +20,6 @@
 }
 
 .annotation_header span {
-    font-size: 13px;
     color: rgba(0,0,0,0.54);
     margin-left: 8px;
     float: right;
@@ -28,9 +27,23 @@
 
 .annotation_target {
     font-style: italic;
-    margin-top: 1em;
+    margin: 1em 0;
     padding: 0 1em;
     color: rgba(0,0,0,0.54);
+}
+
+.annotation_target blockquote {
+    margin-bottom: 4px;
+}
+
+.read_more, .read_less {
+    padding: 3px 6px;
+    border: 1px solid #007bff;
+    border-radius: 14px;
+    color: #007bff;
+    background-color: #FFF;
+    line-height: 20px;
+    font-weight: 700;
 }
 
 .hide {

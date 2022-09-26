@@ -24,7 +24,8 @@
 				<blockquote>
 					{$annotation->target}
 				</blockquote>
-				<button onclick="readMore(this)">{translate key="common.more"}</button>
+				<button class="read_more" onclick="toggleReadMore(this)">{translate key="common.more"}</button>
+				<button class="read_less hide" onclick="toggleReadMore(this)">{translate key="common.less"}</button>
 			</div>
 			{/if}
 			<span class="annotation_content">
@@ -33,31 +34,3 @@
 		</div>
 	{/foreach}
 </div>
-<script>
-	$(function(){ldelim}
-		let maxCharNumber = 300;
-		let annotationTargets = document.querySelectorAll('.annotation_target > blockquote');
-
-		annotationTargets.forEach(target => {ldelim}
-			if(target.textContent.length <= maxCharNumber) {ldelim}
-				target.nextElementSibling.style.display = "none";
-			{rdelim}
-			else {ldelim}
-				let trimmedText = target.textContent.trim();
-				let textToDisplay = trimmedText.slice(0, maxCharNumber);
-				let textMore = trimmedText.slice(maxCharNumber);
-				target.innerHTML = `${ldelim}textToDisplay{rdelim}<span class="dots">...</span><span class="more hide">${ldelim}textMore{rdelim}</span>`;
-			{rdelim}
-		{rdelim});
-	{rdelim});
-	
-	function readMore(btn){ldelim}
-		let annotation = btn.parentElement;
-		annotation.querySelector('.dots').classList.toggle('hide');
-		annotation.querySelector('.more').classList.toggle('hide');
-		if(btn.textContent == '{translate key="common.more"}')
-			btn.textContent = '{translate key="common.less"}';
-		else
-			btn.textContent = '{translate key="common.more"}';
-	{rdelim}	
-</script>

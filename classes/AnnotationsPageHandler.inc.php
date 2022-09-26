@@ -10,9 +10,12 @@ class AnnotationsPageHandler extends Handler {
         $context = $request->getContext();
         
         $paginationParams = $this->getPaginationParams($args, $context);
-
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign($paginationParams);
+
+        $jsUrl = $request->getBaseUrl() . '/' . $plugin->getPluginPath() . '/js/load.js';
+		$templateMgr->addJavascript('AnnotationsPage', $jsUrl, ['contexts' => 'frontend']);
+
         return $templateMgr->display($plugin->getTemplateResource('annotationsPage.tpl'));
     }
 
