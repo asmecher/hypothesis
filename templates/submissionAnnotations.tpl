@@ -21,15 +21,15 @@
 			</div>
 			{if not empty($annotation->target)}
 			<div class="annotation_target">
-				<blockquote>
-					{$annotation->target}
-				</blockquote>
+				<blockquote>{$annotation->target}</blockquote>
 				<button class="read_more" onclick="toggleReadMore(this)">{translate key="common.more"}</button>
 				<button class="read_less hide" onclick="toggleReadMore(this)">{translate key="common.less"}</button>
 			</div>
 			{/if}
 			<span class="annotation_content">
-				{$annotation->content}
+				<blockquote>{$annotation->content}</blockquote>
+				<button class="read_more" onclick="toggleReadMore(this)">{translate key="common.more"}</button>
+				<button class="read_less hide" onclick="toggleReadMore(this)">{translate key="common.less"}</button>
 			</span>
 		</div>
 	{/foreach}

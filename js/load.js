@@ -1,23 +1,32 @@
 let maxCharNumber = 300;
 let annotationTargets = document.querySelectorAll('.annotation_target > blockquote');
+let annotationContents = document.querySelectorAll('.annotation_content > blockquote');
 
 annotationTargets.forEach(target => {
-    if(target.textContent.length <= maxCharNumber) {
-        let readMoreBtn = target.nextElementSibling;
+    addReadMoreLogic(target);
+});
+
+annotationContents.forEach(content => {
+    addReadMoreLogic(content);
+});
+
+function addReadMoreLogic(element) {
+    if(element.textContent.length <= maxCharNumber) {
+        let readMoreBtn = element.nextElementSibling;
         readMoreBtn.style.display = "none";
     }
     else {
-        let trimmedText = target.textContent.trim();
+        let trimmedText = element.textContent.trim();
         let textToDisplay = trimmedText.slice(0, maxCharNumber);
         let textMore = trimmedText.slice(maxCharNumber);
-        target.innerHTML = `${textToDisplay}<span class="dots">...</span><span class="more hide">${textMore}</span>`;
+        element.innerHTML = `${textToDisplay}<span class="dots">...</span><span class="more hide">${textMore}</span>`;
     }
-});
+}
 
 function toggleReadMore(btn){
-    let annotation = btn.parentElement;
-    annotation.querySelector('.dots').classList.toggle('hide');
-    annotation.querySelector('.more').classList.toggle('hide');
+    let parent = btn.parentElement;
+    parent.querySelector('.dots').classList.toggle('hide');
+    parent.querySelector('.more').classList.toggle('hide');
     if(btn.classList.contains('read_more'))
         btn.nextElementSibling.classList.remove('hide');
     else
