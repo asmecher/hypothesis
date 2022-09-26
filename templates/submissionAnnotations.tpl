@@ -13,6 +13,36 @@
 			{/if}
 		</a>
 	</div>
+	<div class="meta">
+		<div class="authors">
+			{$preprint->getAuthorString()|escape}
+		</div>
+
+		{* DOI *}
+		{foreach from=$pubIdPlugins item=pubIdPlugin}
+			{if $pubIdPlugin->getPubIdType() != 'doi'}
+				{continue}
+			{/if}
+			{assign var=pubId value=$preprint->getCurrentPublication()->getStoredPubId($pubIdPlugin->getPubIdType())}
+			{if $pubId}
+				{assign var="doiUrl" value=$pubIdPlugin->getResolvingURL($journal->getId(), $pubId)|escape}
+				<div class="doi">
+						{capture assign=translatedDOI}{translate key="plugins.pubIds.doi.readerDisplayName"}{/capture}
+						{translate key="semicolon" label=$translatedDOI}
+					<span class="value">
+						<a href="{$doiUrl}">
+							{$doiUrl}
+						</a>
+					</span>
+				</div>
+			{/if}
+		{/foreach}
+
+		<div class="published">
+			{translate key="submission.dates" submitted=$preprint->getDateSubmitted()|date_format:$dateFormatShort published=$preprint->getDatePublished()|date_format:$dateFormatShort}
+		</div>
+	</div>
+
 	{foreach from=$annotations item="annotation"}
 		<div class="annotation">
 			<div class="annotation_header">

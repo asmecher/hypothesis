@@ -10,6 +10,20 @@
     font-weight: 700;
 }
 
+.meta {
+    padding-top: 5px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.meta > .authors {
+    padding-right: 5em;
+}
+
+.meta > .published, .meta > .doi {
+    color: rgba(0,0,0,0.54);
+}
+
 .annotation {
     background-color: #FFF;
     font-size: 14px;

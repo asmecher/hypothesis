@@ -10,8 +10,12 @@ class AnnotationsPageHandler extends Handler {
         $context = $request->getContext();
         
         $paginationParams = $this->getPaginationParams($args, $context);
+        $pubIdPlugins = PluginRegistry::loadCategory('pubIds', true, $context->getId());
+
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign($paginationParams);
+        $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
+        $templateMgr->assign('journal', $context);
 
         $jsUrl = $request->getBaseUrl() . '/' . $plugin->getPluginPath() . '/js/load.js';
 		$templateMgr->addJavascript('AnnotationsPage', $jsUrl, ['contexts' => 'frontend']);
