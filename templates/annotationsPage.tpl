@@ -9,7 +9,6 @@
 {include file="frontend/components/header.tpl" pageTitleTranslated=$pageTitle}
 
 <div class="page page_issue_archive">
-	{include file="frontend/components/archiveHeader.tpl"}
 
 	<h1>{$pageTitle|escape}</h1>
     
