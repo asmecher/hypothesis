@@ -5,6 +5,7 @@ define('ORDER_BY_LAST_ANNOTATION', 'lastAnnotation');
 
 import('classes.handler.Handler');
 import('plugins.generic.hypothesis.classes.HypothesisHandler');
+import('plugins.generic.hypothesis.classes.HypothesisDAO');
 
 class AnnotationsPageHandler extends Handler {
     
@@ -73,18 +74,28 @@ class AnnotationsPageHandler extends Handler {
             $submissionsAnnotations = $cache->getContents();
 		}
 
-        if($orderBy == ORDER_BY_LAST_ANNOTATION) {
-            usort($submissionsAnnotations, function($a, $b){
-                $lastAnnotationA = $a->annotations[0];
-                $lastAnnotationB = $b->annotations[0];
-
-                if($lastAnnotationA->dateCreated == $lastAnnotationB->dateCreated) return 0;
-
-                return ($lastAnnotationA->dateCreated < $lastAnnotationB->dateCreated) ? 1 : -1;
-            });
-        }
+        usort($submissionsAnnotations, [$this, $orderBy.'Ordering']);
 
         return $submissionsAnnotations;
+    }
+
+    public function lastAnnotationOrdering($a, $b) {
+        $lastAnnotationA = $a->annotations[0];
+        $lastAnnotationB = $b->annotations[0];
+
+        if($lastAnnotationA->dateCreated == $lastAnnotationB->dateCreated) return 0;
+
+        return ($lastAnnotationA->dateCreated < $lastAnnotationB->dateCreated) ? 1 : -1;
+    }
+
+    public function datePublishedOrdering($a, $b) {
+        $hypothesisDao = new HypothesisDAO();
+        $datePublishedA = $hypothesisDao->getDatePublished($a->submissionId);
+        $datePublishedB = $hypothesisDao->getDatePublished($b->submissionId);
+
+        if($datePublishedA == $datePublishedB) return 0;
+
+        return ($datePublishedA < $datePublishedB) ? 1 : -1;
     }
 
     function cacheDismiss() {
