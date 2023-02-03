@@ -1,5 +1,8 @@
 <?php
 
+define('ORDER_BY_DATE_PUBLISHED', 'datePublished');
+define('ORDER_BY_LAST_ANNOTATION', 'lastAnnotation');
+
 import('classes.handler.Handler');
 import('plugins.generic.hypothesis.classes.HypothesisHandler');
 
@@ -9,7 +12,7 @@ class AnnotationsPageHandler extends Handler {
         $plugin = PluginRegistry::getPlugin('generic', 'hypothesisplugin');
         $context = $request->getContext();
         
-        $paginationParams = $this->getPaginationParams($args, $context);
+        $paginationParams = $this->getPaginationParams($args, $request, $context);
         $pubIdPlugins = PluginRegistry::loadCategory('pubIds', true, $context->getId());
 
         $templateMgr = TemplateManager::getManager($request);
@@ -23,12 +26,13 @@ class AnnotationsPageHandler extends Handler {
         return $templateMgr->display($plugin->getTemplateResource('annotationsPage.tpl'));
     }
 
-    private function getPaginationParams($args, $context): array {
+    private function getPaginationParams($args, $request, $context): array {
         $page = isset($args[0]) ? (int) $args[0] : 1;
         $itemsPerPage = $context->getData('itemsPerPage') ? $context->getData('itemsPerPage') : Config::getVar('interface', 'items_per_page');
 		$offset = $page > 1 ? ($page - 1) * $itemsPerPage : 0;
 
-        $submissionsAnnotations = $this->getSubmissionsAnnotations($context->getId());
+        $orderBy = ($request->getUserVar('orderBy') ?? ORDER_BY_DATE_PUBLISHED);
+        $submissionsAnnotations = $this->getSubmissionsAnnotations($context->getId(), $orderBy);
         $pageAnnotations = array_slice($submissionsAnnotations, $offset, $itemsPerPage);
 
         $total = count($submissionsAnnotations);
@@ -52,7 +56,7 @@ class AnnotationsPageHandler extends Handler {
         ];
     }
 
-    private function getSubmissionsAnnotations($contextId) {
+    private function getSubmissionsAnnotations($contextId, $orderBy) {
         $cacheManager = CacheManager::getManager();
 		$cache = $cacheManager->getFileCache(
 			$contextId,
@@ -68,6 +72,17 @@ class AnnotationsPageHandler extends Handler {
 			$cache->setEntireCache($hypothesisHandler->getSubmissionsAnnotations($contextId));
             $submissionsAnnotations = $cache->getContents();
 		}
+
+        if($orderBy == ORDER_BY_LAST_ANNOTATION) {
+            usort($submissionsAnnotations, function($a, $b){
+                $lastAnnotationA = $a->annotations[0];
+                $lastAnnotationB = $b->annotations[0];
+
+                if($lastAnnotationA->dateCreated == $lastAnnotationB->dateCreated) return 0;
+
+                return ($lastAnnotationA->dateCreated < $lastAnnotationB->dateCreated) ? 1 : -1;
+            });
+        }
 
         return $submissionsAnnotations;
     }
