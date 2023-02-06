@@ -31,3 +31,12 @@ msgstr "Annotations - Page {$pageNumber}"
 
 msgid "plugins.generic.hypothesis.noSubmissionsWithAnnotations"
 msgstr "There are no annotated submissions"
+
+msgid "plugins.generic.hypothesis.orderBy"
+msgstr "Order by:"
+
+msgid "plugins.generic.hypothesis.orderBy.datePublished"
+msgstr "Date published"
+
+msgid "plugins.generic.hypothesis.orderBy.lastAnnotation"
+msgstr "Date of last annotation"

@@ -15,6 +15,15 @@
 	{if empty($submissionsAnnotations)}
 		<p>{translate key="plugins.generic.hypothesis.noSubmissionsWithAnnotations"}</p>
 	{else}
+		
+		<div id="orderSubmissions">
+			<label for="selectOrderSubmissions">{translate key="plugins.generic.hypothesis.orderBy"}</label>
+			<select id="selectOrderSubmissions">
+				<option value="datePublished">{translate key="plugins.generic.hypothesis.orderBy.datePublished"}</option>
+				<option value="lastAnnotation">{translate key="plugins.generic.hypothesis.orderBy.lastAnnotation"}</option>
+			</select>
+		</div>
+		
 		<ul class="cmp_article_list articles">
 			{foreach from=$submissionsAnnotations item="submissionAnnotations"}
 				<li>

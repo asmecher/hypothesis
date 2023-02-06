@@ -1,3 +1,15 @@
+#orderSubmissions {
+    margin-bottom: 1rem;
+}
+
+#selectOrderSubmissions {
+    background: #FFF;
+    border: 1px solid rgba(0,0,0,0.4);
+    border-radius: 3px;
+    font-size: 0.93rem;
+    height: calc(2.143rem - 2px);
+}
+
 .submission_annotations {
     background-color: #fafaf8;
     padding: 10px 15px;
