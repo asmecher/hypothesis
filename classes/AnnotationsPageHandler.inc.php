@@ -49,6 +49,7 @@ class AnnotationsPageHandler extends Handler {
 
         return [
             'submissionsAnnotations' => $pageAnnotations,
+            'orderBy' => $orderBy,
             'showingStart' => $showingStart,
             'showingEnd' => $showingEnd,
             'total' => $total,

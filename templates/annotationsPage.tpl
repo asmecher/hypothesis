@@ -19,8 +19,12 @@
 		<div id="orderSubmissions">
 			<label for="selectOrderSubmissions">{translate key="plugins.generic.hypothesis.orderBy"}</label>
 			<select id="selectOrderSubmissions">
-				<option value="datePublished">{translate key="plugins.generic.hypothesis.orderBy.datePublished"}</option>
-				<option value="lastAnnotation">{translate key="plugins.generic.hypothesis.orderBy.lastAnnotation"}</option>
+				<option value="datePublished" {if $orderBy == "datePublished"}selected="selected"{/if}>
+					{translate key="plugins.generic.hypothesis.orderBy.datePublished"}
+				</option>
+				<option value="lastAnnotation" {if $orderBy == "lastAnnotation"}selected="selected"{/if}>
+					{translate key="plugins.generic.hypothesis.orderBy.lastAnnotation"}
+				</option>
 			</select>
 		</div>
 		
