@@ -57,3 +57,12 @@
 </div>
 
 {include file="frontend/components/footer.tpl"}
+
+<script>
+	let orderSelector = document.getElementById('selectOrderSubmissions');
+	orderSelector.addEventListener('change', function(){ldelim}
+		let orderSelected = orderSelector.value;
+		let url = window.location.href.split('?')[0];
+		window.open(url+'?orderBy='+orderSelected, '_self');
+	{rdelim});
+</script>
