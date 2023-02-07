@@ -38,12 +38,12 @@
 
 		{* Pagination *}
 		{if $prevPage > 1}
-			{capture assign=prevUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations" path=$prevPage}{/capture}
+			{capture assign=prevUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations" path=$prevPage params=['orderBy' => $orderBy]}{/capture}
 		{elseif $prevPage === 1}
-			{capture assign=prevUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations"}{/capture}
+			{capture assign=prevUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations" params=['orderBy' => $orderBy]}{/capture}
 		{/if}
 		{if $nextPage}
-			{capture assign=nextUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations" path=$nextPage}{/capture}
+			{capture assign=nextUrl}{url router=$smarty.const.ROUTE_PAGE page="annotations" path=$nextPage params=['orderBy' => $orderBy]}{/capture}
 		{/if}
 		{include
 			file="frontend/components/pagination.tpl"
