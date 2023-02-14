@@ -75,24 +75,25 @@ class AnnotationsPageHandler extends Handler {
             $submissionsAnnotations = $cache->getContents();
 		}
 
-        usort($submissionsAnnotations, [$this, $orderBy.'Ordering']);
+        $orderingFunction = $orderBy.'Ordering';
+        usort($submissionsAnnotations, [$this, $orderingFunction]);
 
         return $submissionsAnnotations;
     }
 
-    public function lastAnnotationOrdering($a, $b) {
-        $lastAnnotationA = $a->annotations[0];
-        $lastAnnotationB = $b->annotations[0];
+    public function lastAnnotationOrdering($submissionAnnotationsA, $submissionAnnotationsB) {
+        $lastAnnotationA = $submissionAnnotationsA->annotations[0];
+        $lastAnnotationB = $submissionAnnotationsB->annotations[0];
 
         if($lastAnnotationA->dateCreated == $lastAnnotationB->dateCreated) return 0;
 
         return ($lastAnnotationA->dateCreated < $lastAnnotationB->dateCreated) ? 1 : -1;
     }
 
-    public function datePublishedOrdering($a, $b) {
+    public function datePublishedOrdering($submissionAnnotationsA, $submissionAnnotationsB) {
         $hypothesisDao = new HypothesisDAO();
-        $datePublishedA = $hypothesisDao->getDatePublished($a->submissionId);
-        $datePublishedB = $hypothesisDao->getDatePublished($b->submissionId);
+        $datePublishedA = $hypothesisDao->getDatePublished($submissionAnnotationsA->submissionId);
+        $datePublishedB = $hypothesisDao->getDatePublished($submissionAnnotationsB->submissionId);
 
         if($datePublishedA == $datePublishedB) return 0;
 
