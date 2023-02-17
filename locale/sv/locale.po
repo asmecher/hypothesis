@@ -1,2 +1,21 @@
+# Magnus Annemark <magnus.annemark@ub.lu.se>, 2022.
 msgid ""
-msgstr "X-Generator: Weblate\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit"
+msgstr ""
+"PO-Revision-Date: 2022-02-17 10:26+0000\n"
+"Last-Translator: Magnus Annemark <magnus.annemark@ub.lu.se>\n"
+"Language-Team: Swedish <http://translate.pkp.sfu.ca/projects/plugins/"
+"hypothesis/sv_SE/>\n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.9.1\n"
+
+msgid "plugins.generic.hypothesis.description"
+msgstr ""
+"Denna plugin integrerar Hypothes.is i OJS artikelvisning, vilket ger läsare "
+"möjlighet att lägga till noter och kommentarer."
+
+msgid "plugins.generic.hypothesis.name"
+msgstr "Hypothes.is-plugin"
