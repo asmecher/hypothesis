@@ -32,7 +32,7 @@ class AnnotationsPageHandler extends Handler {
         $itemsPerPage = $context->getData('itemsPerPage') ? $context->getData('itemsPerPage') : Config::getVar('interface', 'items_per_page');
 		$offset = $page > 1 ? ($page - 1) * $itemsPerPage : 0;
 
-        $orderBy = ($request->getUserVar('orderBy') ?? ORDER_BY_DATE_PUBLISHED);
+        $orderBy = ($request->getUserVar('orderBy') ?? ORDER_BY_LAST_ANNOTATION);
         $submissionsAnnotations = $this->getSubmissionsAnnotations($context->getId(), $orderBy);
         $pageAnnotations = array_slice($submissionsAnnotations, $offset, $itemsPerPage);
 
