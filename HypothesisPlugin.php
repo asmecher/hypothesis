@@ -12,7 +12,10 @@
  */
 
 
-import('lib.pkp.classes.plugins.GenericPlugin');
+namespace APP\plugins\generic\hypothesis;
+
+use PKP\plugins\GenericPlugin;
+use PKP\plugins\Hook;
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
@@ -20,8 +23,8 @@ class HypothesisPlugin extends GenericPlugin {
 	 */
 	function register($category, $path, $mainContextId = null) {
 		if (parent::register($category, $path, $mainContextId)) {
-			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
-			HookRegistry::register('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
+			Hook::add('ArticleHandler::download',array(&$this, 'callback'));
+			Hook::add('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
 			return true;
 		}
 		return false;
