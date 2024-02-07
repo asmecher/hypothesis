@@ -46,18 +46,18 @@
 	{foreach from=$annotations item="annotation"}
 		<div class="annotation">
 			<div class="annotation_header">
-				<strong>{$annotation->user}</strong>
+				<strong>{$annotation->user|escape}</strong>
 				<span>{$annotation->dateCreated|date_format:$dateFormatLong}</span>
 			</div>
 			{if not empty($annotation->target)}
 			<div class="annotation_target">
-				<blockquote>{$annotation->target}</blockquote>
+				<blockquote>{$annotation->target|escape}</blockquote>
 				<button class="read_more" onclick="toggleReadMore(this)">{translate key="common.more"}</button>
 				<button class="read_less hide" onclick="toggleReadMore(this)">{translate key="common.less"}</button>
 			</div>
 			{/if}
 			<span class="annotation_content">
-				<blockquote>{$annotation->content}</blockquote>
+				<blockquote>{$annotation->content|escape}</blockquote>
 				<button class="read_more" onclick="toggleReadMore(this)">{translate key="common.more"}</button>
 				<button class="read_less hide" onclick="toggleReadMore(this)">{translate key="common.less"}</button>
 			</span>

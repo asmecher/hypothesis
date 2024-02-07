@@ -15,7 +15,6 @@
 	{if empty($submissionsAnnotations)}
 		<p>{translate key="plugins.generic.hypothesis.noSubmissionsWithAnnotations"}</p>
 	{else}
-		
 		<div id="orderSubmissions">
 			<label for="selectOrderSubmissions">{translate key="plugins.generic.hypothesis.orderBy"}</label>
 			<select id="selectOrderSubmissions">
