@@ -23,9 +23,10 @@ class HypothesisPlugin extends GenericPlugin {
 	 */
 	function register($category, $path, $mainContextId = null) {
 		if (parent::register($category, $path, $mainContextId)) {
-			Hook::add('ArticleHandler::download',array(&$this, 'callback'));
+			Hook::add('ArticleHandler::download', array(&$this, 'callback'));
 			Hook::add('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
-			Hook::add('LoadHandler', [$this, 'addAnnotationsHandler']);
+			Hook::add('Templates::Preprint::Details', array($this, 'addAnnotationNumberViewers'));
+			Hook::add('LoadHandler', array($this, 'addAnnotationsHandler'));
 			return true;
 		}
 		return false;
@@ -80,8 +81,16 @@ class HypothesisPlugin extends GenericPlugin {
 		return $newOutput;
 	}
 
-	public function addAnnotationsHandler($hookName, $args)
-    {
+	public function addAnnotationNumberViewers($hookName, $args) {
+		$templateMgr = $args[1];
+		$output = &$args[2];
+		
+		$output .= $templateMgr->fetch($this->getTemplateResource('addAnnotationViewers.tpl'));
+
+		return false;
+	}
+
+	public function addAnnotationsHandler($hookName, $args) {
         $page = $args[0];
         if ($page == 'annotations') {
             define('HANDLER_CLASS', 'APP\plugins\generic\hypothesis\pages\annotations\AnnotationsHandler');
