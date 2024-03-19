@@ -25,6 +25,7 @@ class HypothesisPlugin extends GenericPlugin {
 		if (parent::register($category, $path, $mainContextId)) {
 			Hook::add('ArticleHandler::download',array(&$this, 'callback'));
 			Hook::add('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
+			Hook::add('LoadHandler', [$this, 'addAnnotationsHandler']);
 			return true;
 		}
 		return false;
@@ -78,6 +79,16 @@ class HypothesisPlugin extends GenericPlugin {
 		$newOutput = str_replace('pdfJsViewer/pdf.js/web/viewer.html?file=', 'hypothesis/pdf.js/viewer/web/viewer.html?file=', $output);
 		return $newOutput;
 	}
+
+	public function addAnnotationsHandler($hookName, $args)
+    {
+        $page = $args[0];
+        if ($page == 'annotations') {
+            define('HANDLER_CLASS', 'APP\plugins\generic\hypothesis\pages\annotations\AnnotationsHandler');
+            return true;
+        }
+        return false;
+    }
 
 	/**
 	 * Get the display name of this plugin
