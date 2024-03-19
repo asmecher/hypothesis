@@ -1,5 +1,7 @@
 <?php
 
+namespace APP\plugins\generic\hypothesis\pages\annotations;
+
 use APP\handler\Handler;
 use PKP\plugins\PluginRegistry;
 use APP\template\TemplateManager;
@@ -11,7 +13,7 @@ use APP\security\authorization\OpsServerMustPublishPolicy;
 use APP\plugins\generic\hypothesis\classes\HypothesisHandler;
 use APP\plugins\generic\hypothesis\classes\HypothesisDAO;
 
-class AnnotationsPageHandler extends Handler {
+class AnnotationsHandler extends Handler {
 
     private const ORDER_BY_DATE_PUBLISHED = 'datePublished';
     private const ORDER_BY_LAST_ANNOTATION = 'lastAnnotation';
@@ -68,7 +70,11 @@ class AnnotationsPageHandler extends Handler {
             'showingEnd' => $showingEnd,
             'total' => $total,
             'nextPage' => $nextPage,
-            'prevPage' => $prevPage
+            'prevPage' => $prevPage,
+            'authorUserGroups' => Repo::userGroup()->getCollector()
+                ->filterByRoleIds([\PKP\security\Role::ROLE_ID_AUTHOR])
+                ->filterByContextIds([$context->getId()])
+                ->getMany()->remember(),
         ];
     }
 
