@@ -16,6 +16,8 @@ namespace APP\plugins\generic\hypothesis;
 
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
+use APP\core\Application;
+use APP\template\TemplateManager;
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
@@ -25,8 +27,12 @@ class HypothesisPlugin extends GenericPlugin {
 		if (parent::register($category, $path, $mainContextId)) {
 			Hook::add('ArticleHandler::download', array(&$this, 'callback'));
 			Hook::add('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
-			Hook::add('Templates::Preprint::Details', array($this, 'addAnnotationNumberViewers'));
+			Hook::add('TemplateManager::display', [$this, 'addAnnotationNumberViewers']);
 			Hook::add('LoadHandler', array($this, 'addAnnotationsHandler'));
+			Hook::add('LoadComponentHandler', array($this, 'setupHypothesisHandler'));
+
+			$this->addHandlerURLToJavaScript();
+
 			return true;
 		}
 		return false;
@@ -82,11 +88,22 @@ class HypothesisPlugin extends GenericPlugin {
 	}
 
 	public function addAnnotationNumberViewers($hookName, $args) {
-		$templateMgr = $args[1];
-		$output = &$args[2];
+		$templateMgr = $args[0];
+		$template = $args[1];
+		$pagesToInsert = [
+			'frontend/pages/indexServer.tpl'
+		];
 		
-		$output .= $templateMgr->fetch($this->getTemplateResource('addAnnotationViewers.tpl'));
+		if (in_array($template, $pagesToInsert)) {
+            $request = Application::get()->getRequest();
 
+            $jsUrl = $request->getBaseUrl() . '/' . $this->getPluginPath() . '/js/addAnnotationViewers.js';
+            $styleUrl = $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/annotationViewer.css';
+
+            $templateMgr->addJavascript('AddAnnotationViewers', $jsUrl, ['contexts' => 'frontend']);
+            $templateMgr->addStyleSheet('AnnotationViewerStyleSheet', $styleUrl, ['contexts' => 'frontend']);
+        }
+        
 		return false;
 	}
 
@@ -97,6 +114,24 @@ class HypothesisPlugin extends GenericPlugin {
             return true;
         }
         return false;
+    }
+
+	public function setupHypothesisHandler($hookName, $args) {
+		$component = &$args[0];
+        if ($component == 'plugins.generic.hypothesis.controllers.HypothesisHandler') {
+            return true;
+        }
+        return false;
+	}
+
+	public function addHandlerURLToJavaScript()
+    {
+        $request = Application::get()->getRequest();
+        $templateMgr = TemplateManager::getManager($request);
+        $handlerUrl = $request->getDispatcher()->url($request, Application::ROUTE_COMPONENT, null, 'plugins.generic.hypothesis.controllers.HypothesisHandler');
+        $data = ['hypothesisHandlerUrl' => $handlerUrl];
+
+        $templateMgr->addJavaScript('HypothesisHandler', 'app = ' . json_encode($data) . ';', ['contexts' => 'frontend', 'inline' => true]);
     }
 
 	/**
