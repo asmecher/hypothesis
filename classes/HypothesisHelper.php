@@ -7,7 +7,7 @@ use APP\core\Application;
 use APP\plugins\generic\hypothesis\classes\Annotation;
 use APP\plugins\generic\hypothesis\classes\SubmissionAnnotations;
 
-class HypothesisHandler {
+class HypothesisHelper {
     public function getSubmissionsAnnotations($contextId) {
         $submissions = Repo::submission()->getCollector()
             ->filterByContextIds([$contextId])

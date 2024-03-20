@@ -10,7 +10,7 @@ use APP\facades\Repo;
 use PKP\cache\CacheManager;
 use PKP\security\authorization\ContextRequiredPolicy;
 use APP\security\authorization\OpsServerMustPublishPolicy;
-use APP\plugins\generic\hypothesis\classes\HypothesisHandler;
+use APP\plugins\generic\hypothesis\classes\HypothesisHelper;
 use APP\plugins\generic\hypothesis\classes\HypothesisDAO;
 
 class AnnotationsHandler extends Handler {
@@ -90,8 +90,8 @@ class AnnotationsHandler extends Handler {
 
 		if (is_null($submissionsAnnotations)){
 			$cache->flush();
-            $hypothesisHandler = new HypothesisHandler();
-			$cache->setEntireCache($hypothesisHandler->getSubmissionsAnnotations($contextId));
+            $hypothesisHelper = new HypothesisHelper();
+			$cache->setEntireCache($hypothesisHelper->getSubmissionsAnnotations($contextId));
             $submissionsAnnotations = $cache->getContents();
 		}
 
