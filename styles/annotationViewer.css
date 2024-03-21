@@ -2,8 +2,18 @@
     margin-right: 0.25em;
 }
 
-.annotation_viewer {
-    margin: 0.5em 0 1em;
+.obj_article_details .galleys_links .annotation_viewer {
+    margin-top: 0.5em;
+}
+
+.obj_article_summary .galleys_links .annotation_viewer {
+    margin: 0;
+}
+
+.annotation_viewer.hidden_viewer {
+    visibility: hidden;
+    width: 0;
+    height: 0;
 }
 
 .annotation_viewer > a {

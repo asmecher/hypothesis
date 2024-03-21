@@ -18,15 +18,10 @@ class HypothesisHandler extends Handler {
         $galleyDownloadUrl = str_replace('view', 'download', $galleyUrl);
         $galleyDownloadUrl .= "/$fileId";
 
-        $response = file_get_contents("https://hypothes.is/api/search?limit=0&group=__world__&uri={$galleyDownloadUrl}");
-        $response = json_decode($response, true);
-
-        if ($response['total'] > 0) {
-            $suffix = ($response['total'] == 1 ? 'annotation' : 'annotations');
-            $message = $response['total'] . ' ' . __("plugins.generic.hypothesis.$suffix");
-            return json_encode(['message' => $message]);
-        }
-        
-        return json_encode(null);
+        return json_encode([
+            'downloadUrl' => $galleyDownloadUrl,
+            'annotationMsg' => __('plugins.generic.hypothesis.annotation'),
+            'annotationsMsg' => __('plugins.generic.hypothesis.annotations')
+        ]);
     }
 }
