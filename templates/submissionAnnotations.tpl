@@ -1,11 +1,16 @@
-{assign var="preprint" value=$submissionAnnotations->submission}
+{assign var="submission" value=$submissionAnnotations->submission}
 {assign var="annotations" value=$submissionAnnotations->annotations}
 
 <div class="submission_annotations">
     <div class="title">
-		{assign var=preprintPath value=$preprint->getBestId()}
-		<a id="preprint-{$preprint->getId()}" {if $journal}href="{url journal=$journal->getPath() page="preprint" op="view" path=$preprintPath}"{else}href="{url page="preprint" op="view" path=$preprintPath}"{/if}>
-			{assign var=publication value=$preprint->getCurrentPublication()}
+		{assign var=submissionPath value=$submission->getBestId()}
+		{if $application == 'ojs2'}
+			{capture assign=submissionUrl}{if $context}{url journal=$context->getPath() page="article" op="view" path=$submissionPath}{else}{url page="article" op="view" path=$submissionPath}{/if}{/capture}
+		{else}
+			{capture assign=submissionUrl}{if $context}{url server=$context->getPath() page="preprint" op="view" path=$submissionPath}{else}{url page="preprint" op="view" path=$submissionPath}{/if}{/capture}
+		{/if}
+		<a id="submission-{$submission->getId()}" href="{$submissionUrl}">
+			{assign var=publication value=$submission->getCurrentPublication()}
 			{$publication->getLocalizedTitle(null, 'html')|strip_unsafe_html}
 			{if $publication->getLocalizedSubtitle()}
 				<span class="subtitle">
@@ -16,32 +21,34 @@
 	</div>
 	<div class="meta">
 		<div class="authors">
-			{$preprint->getCurrentPublication()->getAuthorString($authorUserGroups)|escape}
+			{$submission->getCurrentPublication()->getAuthorString($authorUserGroups)|escape}
 		</div>
 
-		{* DOI *}
-		{foreach from=$pubIdPlugins item=pubIdPlugin}
-			{if $pubIdPlugin->getPubIdType() != 'doi'}
-				{continue}
-			{/if}
-			{assign var=pubId value=$preprint->getCurrentPublication()->getStoredPubId($pubIdPlugin->getPubIdType())}
-			{if $pubId}
-				{assign var="doiUrl" value=$pubIdPlugin->getResolvingURL($currentServer->getId(), $pubId)|escape}
-				<div class="doi">
-						{capture assign=translatedDOI}{translate key="doi.readerDisplayName"}{/capture}
-						{translate key="semicolon" label=$translatedDOI}
-					<span class="value">
-						<a href="{$doiUrl}">
-							{$doiUrl}
-						</a>
-					</span>
-				</div>
-			{/if}
-		{/foreach}
+		{if $application == 'ops'}
+			{* DOI *}
+			{foreach from=$pubIdPlugins item=pubIdPlugin}
+				{if $pubIdPlugin->getPubIdType() != 'doi'}
+					{continue}
+				{/if}
+				{assign var=pubId value=$submission->getCurrentPublication()->getStoredPubId($pubIdPlugin->getPubIdType())}
+				{if $pubId}
+					{assign var="doiUrl" value=$pubIdPlugin->getResolvingURL($context->getId(), $pubId)|escape}
+					<div class="doi">
+							{capture assign=translatedDOI}{translate key="doi.readerDisplayName"}{/capture}
+							{translate key="semicolon" label=$translatedDOI}
+						<span class="value">
+							<a href="{$doiUrl}">
+								{$doiUrl}
+							</a>
+						</span>
+					</div>
+				{/if}
+			{/foreach}
 
-		<div class="published">
-			{translate key="submission.dates" submitted=$preprint->getDateSubmitted()|date_format:$dateFormatShort published=$preprint->getDatePublished()|date_format:$dateFormatShort}
-		</div>
+			<div class="published">
+				{translate key="submission.dates" submitted=$submission->getDateSubmitted()|date_format:$dateFormatShort published=$submission->getDatePublished()|date_format:$dateFormatShort}
+			</div>
+		{/if}
 	</div>
 
 	{foreach from=$annotations item="annotation"}

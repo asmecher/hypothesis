@@ -93,9 +93,13 @@ class HypothesisPlugin extends GenericPlugin {
 		$pagesToInsert = [
 			'frontend/pages/indexServer.tpl',
 			'frontend/pages/preprint.tpl',
-			'frontend/pages/preprints.tpl'
+			'frontend/pages/preprints.tpl',
+			'frontend/pages/sections.tpl',
+			'frontend/pages/indexJournal.tpl',
+			'frontend/pages/article.tpl',
+			'frontend/pages/issue.tpl'
 		];
-		
+
 		if (in_array($template, $pagesToInsert)) {
             $request = Application::get()->getRequest();
 

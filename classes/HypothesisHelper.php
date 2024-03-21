@@ -20,7 +20,7 @@ class HypothesisHelper {
             if (!is_null($groupResponse) && $groupResponse['total'] > 0) {
                 $submissionsAnnotations = array_merge(
                     $submissionsAnnotations,
-                    $this->groupSubmissionsAnnotations($groupResponse)
+                    $this->groupSubmissionsAnnotations($groupResponse, $contextId)
                 );
             }
         }
@@ -59,7 +59,7 @@ class HypothesisHelper {
 
         $galleys = $publication->getData('galleys');
         foreach ($galleys as $galley) {
-            $galleyDownloadURL = $this->getGalleyDownloadURL($galley, $contextId);
+            $galleyDownloadURL = $this->getGalleyDownloadURL($contextId, $submission, $galley);
             if(!is_null($galleyDownloadURL))
                 $submissionRequestParams .= "&uri={$galleyDownloadURL}";
         }
@@ -76,12 +76,13 @@ class HypothesisHelper {
         return json_decode($output, true);
     }
 
-    private function groupSubmissionsAnnotations($groupResponse) {
+    private function groupSubmissionsAnnotations($groupResponse, $contextId) {
         $submissionsAnnotations = [];
 
         foreach ($groupResponse['rows'] as $annotationResponse) {
             $urlBySlash = explode("/", $annotationResponse['links']['incontext']);
-            $submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
+            $submissionBestId = (int) $urlBySlash[count($urlBySlash) - 3];
+            $submissionId = Repo::submission()->getByBestId($submissionBestId, $contextId)->getId();
 
             if(!array_key_exists($submissionId, $submissionsAnnotations)) {
                 $submissionsAnnotations[$submissionId] = new SubmissionAnnotations($submissionId);
@@ -112,20 +113,21 @@ class HypothesisHelper {
         return new Annotation($user, $dateCreated, $target, $content);
     }
 
-    public function getGalleyDownloadURL($galley, $contextId) {
+    public function getGalleyDownloadURL($contextId, $submission, $galley) {
         $request = Application::get()->getRequest();
         $indexUrl = $request->getIndexUrl();
         $context = Application::getContextDAO()->getById($contextId);
         $contextPath = $context->getPath();
+        $submissionType = (Application::getName() == 'ojs2' ? 'article' : 'preprint');
 
         $submissionFile = $galley->getFile();
         if(is_null($submissionFile))
             return null;
 
-        $submissionId = $submissionFile->getData('submissionId');
-        $assocId = $submissionFile->getData('assocId');
-        $submissionFileId = $submissionFile->getId();
+        $submissionBestId = $submission->getBestId();
+        $galleyBestId = $galley->getBestGalleyId();
+        $fileId = $submissionFile->getId();
 
-        return $indexUrl . "/$contextPath/preprint/download/$submissionId/$assocId/$submissionFileId";
+        return $indexUrl . "/$contextPath/$submissionType/download/$submissionBestId/$galleyBestId/$fileId";
     }
 }

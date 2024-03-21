@@ -5,11 +5,11 @@ namespace APP\plugins\generic\hypothesis\pages\annotations;
 use APP\handler\Handler;
 use PKP\plugins\PluginRegistry;
 use APP\template\TemplateManager;
+use APP\core\Application;
 use PKP\config\Config;
 use APP\facades\Repo;
 use PKP\cache\CacheManager;
 use PKP\security\authorization\ContextRequiredPolicy;
-use APP\security\authorization\OpsServerMustPublishPolicy;
 use APP\plugins\generic\hypothesis\classes\HypothesisHelper;
 use APP\plugins\generic\hypothesis\classes\HypothesisDAO;
 
@@ -21,7 +21,12 @@ class AnnotationsHandler extends Handler {
     public function authorize($request, &$args, $roleAssignments)
     {
         $this->addPolicy(new ContextRequiredPolicy($request));
-        $this->addPolicy(new OpsServerMustPublishPolicy($request));
+        
+        if (Application::getName() == 'ojs2') {
+            $this->addPolicy(new \APP\security\authorization\OjsJournalMustPublishPolicy($request));
+        } else {
+            $this->addPolicy(new \APP\security\authorization\OpsServerMustPublishPolicy($request));
+        }
 
         return parent::authorize($request, $args, $roleAssignments);
     }
@@ -36,7 +41,8 @@ class AnnotationsHandler extends Handler {
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign($paginationParams);
         $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
-        $templateMgr->assign('journal', $context);
+        $templateMgr->assign('context', $context);
+        $templateMgr->assign('application', Application::getName());
 
         $jsUrl = $request->getBaseUrl() . '/' . $plugin->getPluginPath() . '/js/load.js';
 		$templateMgr->addJavascript('AnnotationsPage', $jsUrl, ['contexts' => 'frontend']);
