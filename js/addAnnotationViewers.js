@@ -19,14 +19,20 @@ async function addAnnotationViewers() {
 
     for (let galleyLink of galleyLinks) {
         let galleyUrl = galleyLink.href;
-        let galleyDownloadUrl = await $.get(
-            app.hypothesisHandlerUrl + 'get-galley-download-url',
+        let viewerData = await $.get(
+            app.hypothesisHandlerUrl + 'get-annotation-viewer-data',
             {
                 galleyUrl: galleyUrl
             }
         );
-        let viewerNode = createAnnotationViewerNode(JSON.parse(galleyDownloadUrl), '1 annotation');
-        insertAfter(viewerNode, galleyLink.parentNode);
+
+        viewerData = JSON.parse(viewerData);
+        if (viewerData !== null) {
+            galleyUrl = galleyUrl + '?hasAnnotations=true';
+            galleyLink.href = galleyUrl;
+            let viewerNode = createAnnotationViewerNode(galleyUrl, viewerData['message']);
+            insertAfter(viewerNode, galleyLink.parentNode);
+        }
     }
 }
 

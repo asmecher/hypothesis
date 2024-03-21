@@ -91,7 +91,9 @@ class HypothesisPlugin extends GenericPlugin {
 		$templateMgr = $args[0];
 		$template = $args[1];
 		$pagesToInsert = [
-			'frontend/pages/indexServer.tpl'
+			'frontend/pages/indexServer.tpl',
+			'frontend/pages/preprint.tpl',
+			'frontend/pages/preprints.tpl'
 		];
 		
 		if (in_array($template, $pagesToInsert)) {
