@@ -15,7 +15,7 @@ function createAnnotationViewerNode(galleyId) {
 }
 
 async function addAnnotationViewers() {
-    let galleyLinks = document.getElementsByClassName('obj_galley_link');
+    let galleyLinks = document.getElementsByClassName('obj_galley_link pdf');
 
     for (let galleyLink of galleyLinks) {
         let galleyUrl = galleyLink.href;

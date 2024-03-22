@@ -4,6 +4,7 @@ namespace APP\plugins\generic\hypothesis\classes;
 
 use APP\facades\Repo;
 use APP\core\Application;
+use APP\submission\Submission;
 use APP\plugins\generic\hypothesis\classes\Annotation;
 use APP\plugins\generic\hypothesis\classes\SubmissionAnnotations;
 
@@ -11,6 +12,7 @@ class HypothesisHelper {
     public function getSubmissionsAnnotations($contextId) {
         $submissions = Repo::submission()->getCollector()
             ->filterByContextIds([$contextId])
+            ->filterByStatus([Submission::STATUS_PUBLISHED])
             ->getMany();
 
         $groupsRequests = $this->getSubmissionsGroupsRequests($submissions, $contextId);
@@ -59,9 +61,12 @@ class HypothesisHelper {
 
         $galleys = $publication->getData('galleys');
         foreach ($galleys as $galley) {
-            $galleyDownloadURL = $this->getGalleyDownloadURL($contextId, $submission, $galley);
-            if(!is_null($galleyDownloadURL))
-                $submissionRequestParams .= "&uri={$galleyDownloadURL}";
+            if ($galley->getFileType() == 'application/pdf') {
+                $galleyDownloadURL = $this->getGalleyDownloadURL($contextId, $submission, $galley);
+                if (!is_null($galleyDownloadURL)) {
+                    $submissionRequestParams .= "&uri={$galleyDownloadURL}";
+                }
+            }
         }
 
         return $submissionRequestParams;
@@ -81,7 +86,7 @@ class HypothesisHelper {
 
         foreach ($groupResponse['rows'] as $annotationResponse) {
             $urlBySlash = explode("/", $annotationResponse['links']['incontext']);
-            $submissionBestId = (int) $urlBySlash[count($urlBySlash) - 3];
+            $submissionBestId = $urlBySlash[count($urlBySlash) - 3];
             $submissionId = Repo::submission()->getByBestId($submissionBestId, $contextId)->getId();
 
             if(!array_key_exists($submissionId, $submissionsAnnotations)) {

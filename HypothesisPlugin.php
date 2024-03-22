@@ -30,6 +30,7 @@ class HypothesisPlugin extends GenericPlugin {
 			Hook::add('TemplateManager::display', [$this, 'addAnnotationNumberViewers']);
 			Hook::add('LoadHandler', array($this, 'addAnnotationsHandler'));
 			Hook::add('LoadComponentHandler', array($this, 'setupHypothesisHandler'));
+			Hook::add('AcronPlugin::parseCronTab', [$this, 'addTasksToCrontab']);
 
 			$this->addHandlerURLToJavaScript();
 
@@ -145,6 +146,12 @@ class HypothesisPlugin extends GenericPlugin {
         if ($component == 'plugins.generic.hypothesis.controllers.HypothesisHandler') {
             return true;
         }
+        return false;
+	}
+
+	public function addTasksToCrontab($hookName, $args) {
+		$taskFilesPath = &$args[0];
+        $taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasks.xml';
         return false;
 	}
 
