@@ -1,12 +1,14 @@
 <?php
 
 import('plugins.generic.hypothesis.classes.SubmissionAnnotations');
+import('classes.submission.Submission');
 
-class HypothesisHandler {
+class HypothesisHelper {
 
     public function getSubmissionsAnnotations($contextId) {
         $submissions = Services::get('submission')->getMany([
-            'contextId' => $contextId
+            'contextId' => $contextId,
+            'status' => STATUS_PUBLISHED
         ]);
 
         $groupsRequests = $this->getSubmissionsGroupsRequests($submissions, $contextId);
@@ -55,9 +57,12 @@ class HypothesisHandler {
         
         $galleys = $publication->getData('galleys');
         foreach ($galleys as $galley) {
-            $galleyDownloadURL = $this->getGalleyDownloadURL($galley, $contextId);
-            if(!is_null($galleyDownloadURL))
-                $submissionRequestParams .= "&uri={$galleyDownloadURL}";
+            if ($galley->getFileType() == 'application/pdf') {
+                $galleyDownloadURL = $this->getGalleyDownloadURL($contextId, $submission, $galley);
+                if(!is_null($galleyDownloadURL)) {
+                    $submissionRequestParams .= "&uri={$galleyDownloadURL}";
+                }
+            }
         }
 
         return $submissionRequestParams;
@@ -108,21 +113,22 @@ class HypothesisHandler {
         return new Annotation($user, $dateCreated, $target, $content);
     }
 
-    public function getGalleyDownloadURL($galley, $contextId) {
+    public function getGalleyDownloadURL($contextId, $submission, $galley) {
         $request = Application::get()->getRequest();
         $indexUrl = $request->getIndexUrl();
         $context = Services::get('context')->get($contextId);
         $contextPath = $context->getPath();
+        $submissionType = (Application::getName() == 'ojs2' ? 'article' : 'preprint');
         
         $submissionFile = $galley->getFile();
         if(is_null($submissionFile))
             return null;
 
-        $submissionId = $submissionFile->getData('submissionId');
-        $assocId = $submissionFile->getData('assocId');
-        $submissionFileId = $submissionFile->getId();
+        $submissionBestId = $submission->getBestId();
+        $galleyBestId = $galley->getBestGalleyId();
+        $fileId = $submissionFile->getId();
         
-        return $indexUrl . "/$contextPath/preprint/download/$submissionId/$assocId/$submissionFileId";
+        return $indexUrl . "/$contextPath/$submissionType/download/$submissionBestId/$galleyBestId/$fileId";
     }
 
 }

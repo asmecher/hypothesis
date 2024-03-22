@@ -4,10 +4,25 @@ define('ORDER_BY_DATE_PUBLISHED', 'datePublished');
 define('ORDER_BY_LAST_ANNOTATION', 'lastAnnotation');
 
 import('classes.handler.Handler');
-import('plugins.generic.hypothesis.classes.HypothesisHandler');
+import('plugins.generic.hypothesis.classes.HypothesisHelper');
 import('plugins.generic.hypothesis.classes.HypothesisDAO');
 
-class AnnotationsPageHandler extends Handler {
+class AnnotationsHandler extends Handler {
+    
+    function authorize($request, &$args, $roleAssignments) {
+        import('lib.pkp.classes.security.authorization.ContextRequiredPolicy');
+		$this->addPolicy(new ContextRequiredPolicy($request));
+
+        if (Application::getName() == 'ojs2') {
+            import('classes.security.authorization.OjsJournalMustPublishPolicy');
+            $this->addPolicy(new OjsJournalMustPublishPolicy($request));
+        } else {
+            import('classes.security.authorization.OpsServerMustPublishPolicy');
+            $this->addPolicy(new OpsServerMustPublishPolicy($request));
+        }
+
+        return parent::authorize($request, $args, $roleAssignments);
+    }
     
     function index($args, $request) {
         $plugin = PluginRegistry::getPlugin('generic', 'hypothesisplugin');
@@ -19,7 +34,8 @@ class AnnotationsPageHandler extends Handler {
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign($paginationParams);
         $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
-        $templateMgr->assign('journal', $context);
+        $templateMgr->assign('context', $context);
+        $templateMgr->assign('application', Application::getName());
 
         $jsUrl = $request->getBaseUrl() . '/' . $plugin->getPluginPath() . '/js/load.js';
 		$templateMgr->addJavascript('AnnotationsPage', $jsUrl, ['contexts' => 'frontend']);
@@ -70,8 +86,8 @@ class AnnotationsPageHandler extends Handler {
         
 		if (is_null($submissionsAnnotations)){
 			$cache->flush();
-            $hypothesisHandler = new HypothesisHandler();
-			$cache->setEntireCache($hypothesisHandler->getSubmissionsAnnotations($contextId));
+            $hypothesisHelper = new HypothesisHelper();
+			$cache->setEntireCache($hypothesisHelper->getSubmissionsAnnotations($contextId));
             $submissionsAnnotations = $cache->getContents();
 		}
 

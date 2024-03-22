@@ -3,7 +3,8 @@
 <!DOCTYPE scheduled_tasks SYSTEM "../../../lib/pkp/dtd/scheduledTasks.dtd">
 
 <scheduled_tasks>
-	<task class="plugins.generic.hypothesis.classes.UpdateAnnotationsCache">
+	<task class="plugins.generic.hypothesis.classes.tasks.UpdateAnnotationsCache">
 		<descr>Updates the cache of submissions with annotations.</descr>
+		<frequency hour="3"/>
 	</task>
 </scheduled_tasks>

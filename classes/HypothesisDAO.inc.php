@@ -14,9 +14,9 @@ class HypothesisDAO extends DAO {
         $currentPublicationId = get_object_vars($result)['current_publication_id'];
 
         $result = Capsule::table('publications')
-        ->where('publication_id', $currentPublicationId)
-        ->select('date_published')
-        ->first();
+            ->where('publication_id', $currentPublicationId)
+            ->select('date_published')
+            ->first();
 
         return get_object_vars($result)['date_published'];
     }

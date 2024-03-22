@@ -16,10 +16,14 @@
     border-radius: 3px;
 }
 
-.submission_annotations > .title {
+.submission_annotations .title {
     font-size: 16px;
     line-height: 20px;
     font-weight: 700;
+}
+
+.submission_annotations .title a {
+    text-decoration: none;
 }
 
 .meta {

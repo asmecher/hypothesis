@@ -13,7 +13,6 @@
 
 
 import('lib.pkp.classes.plugins.GenericPlugin');
-import('plugins.generic.hypothesis.classes.HypothesisHandler');
 
 class HypothesisPlugin extends GenericPlugin {
 	/**
@@ -21,18 +20,14 @@ class HypothesisPlugin extends GenericPlugin {
 	 */
 	function register($category, $path, $mainContextId = null) {
 		if (parent::register($category, $path, $mainContextId)) {
-			HookRegistry::register('ArticleHandler::download',array(&$this, 'callback'));
+			HookRegistry::register('ArticleHandler::download', array(&$this, 'callback'));
 			HookRegistry::register('TemplateManager::display', array(&$this, 'callbackTemplateDisplay'));
-			HookRegistry::register('Hypothesis::annotationNumber', array(&$this, 'addAnnotationNumberViewer'));
-			HookRegistry::register('LoadHandler', array($this, 'setAnnotationsPageHandler'));
+			HookRegistry::register('TemplateManager::display', [$this, 'addAnnotationNumberViewers']);
+			HookRegistry::register('LoadHandler', array($this, 'addAnnotationsHandler'));
+			HookRegistry::register('LoadComponentHandler', array($this, 'setupHypothesisHandler'));
+			HookRegistry::register('AcronPlugin::parseCronTab', [$this, 'addTasksToCrontab']);
 
-			$request = PKPApplication::get()->getRequest();
-			$templateMgr = TemplateManager::getManager($request);
-			$templateMgr->addStyleSheet(
-				'Hypothesis',
-				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/annotationViewer.css',
-				['contexts' => ['frontend']]
-			);
+			$this->addHandlerURLToJavaScript();
 
 			return true;
 		}
@@ -89,7 +84,13 @@ class HypothesisPlugin extends GenericPlugin {
 		return $newOutput;
 	}
 
-	function addHypothesisConfig($output, $templateMgr) {
+	/**
+	 * Adds Hypothesis tab configuration so sidebar opens automatically when PDF has annotations
+	 * @param $output string
+	 * @param $templateMgr TemplateManager
+	 * @return $string
+	 */
+	public function addHypothesisConfig($output, $templateMgr) {
 		if (preg_match('/<div[^>]+id="pdfCanvasContainer/', $output, $matches, PREG_OFFSET_CAPTURE)) {
             $posMatch = $matches[0][1];
 			$config = $templateMgr->fetch($this->getTemplateResource('hypothesisConfig.tpl'));
@@ -100,29 +101,65 @@ class HypothesisPlugin extends GenericPlugin {
 		return $output;
 	}
 
-	public function addAnnotationNumberViewer($hookName, $args) {
-		$templateMgr = $args[1];
-		$output =& $args[2];
-		$galley = $args[0]['galley'];
-		$request = PKPApplication::get()->getRequest();
-		$contextId = $request->getContext()->getId();
-		
-		$hypothesisHandler = new HypothesisHandler();
-		$templateMgr->assign('galleyDownloadURL', $hypothesisHandler->getGalleyDownloadURL($galley, $contextId));
-		$output .= $templateMgr->fetch($this->getTemplateResource('annotationViewer.tpl'));
+	public function addAnnotationNumberViewers($hookName, $args) {
+		$templateMgr = $args[0];
+		$template = $args[1];
+		$pagesToInsert = [
+			'frontend/pages/indexServer.tpl',
+			'frontend/pages/preprint.tpl',
+			'frontend/pages/preprints.tpl',
+			'frontend/pages/sections.tpl',
+			'frontend/pages/indexJournal.tpl',
+			'frontend/pages/article.tpl',
+			'frontend/pages/issue.tpl'
+		];
+
+		if (in_array($template, $pagesToInsert)) {
+            $request = Application::get()->getRequest();
+
+            $jsUrl = $request->getBaseUrl() . '/' . $this->getPluginPath() . '/js/addAnnotationViewers.js';
+            $styleUrl = $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/annotationViewer.css';
+
+            $templateMgr->addJavascript('AddAnnotationViewers', $jsUrl, ['contexts' => 'frontend']);
+            $templateMgr->addStyleSheet('AnnotationViewerStyleSheet', $styleUrl, ['contexts' => 'frontend']);
+        }
 
 		return false;
 	}
 
-	public function setAnnotationsPageHandler($hookName, $args) {
+	public function addAnnotationsHandler($hookName, $args) {
 		$page = $args[0];
-		if ($page === 'annotations') {
-			$this->import('classes.AnnotationsPageHandler');
-			define('HANDLER_CLASS', 'AnnotationsPageHandler');
+		if ($page == 'annotations') {
+			$this->import('pages.annotations.AnnotationsHandler');
+			define('HANDLER_CLASS', 'AnnotationsHandler');
 			return true;
 		}
 		return false;
 	}
+
+	public function setupHypothesisHandler($hookName, $args) {
+		$component = &$args[0];
+        if ($component == 'plugins.generic.hypothesis.controllers.HypothesisHandler') {
+            return true;
+        }
+        return false;
+	}
+
+	public function addTasksToCrontab($hookName, $args) {
+		$taskFilesPath = &$args[0];
+        $taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasks.xml';
+        return false;
+	}
+
+	public function addHandlerURLToJavaScript()
+    {
+        $request = Application::get()->getRequest();
+        $templateMgr = TemplateManager::getManager($request);
+        $handlerUrl = $request->getDispatcher()->url($request, ROUTE_COMPONENT, null, 'plugins.generic.hypothesis.controllers.HypothesisHandler');
+        $data = ['hypothesisHandlerUrl' => $handlerUrl];
+
+        $templateMgr->addJavaScript('HypothesisHandler', 'app = ' . json_encode($data) . ';', ['contexts' => 'frontend', 'inline' => true]);
+    }
 
 	/**
 	 * Get the display name of this plugin
