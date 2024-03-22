@@ -12,9 +12,9 @@
 		<a id="submission-{$submission->getId()}" href="{$submissionUrl}">
 			{assign var=publication value=$submission->getCurrentPublication()}	
 			{$publication->getLocalizedTitle()|strip_unsafe_html}
-			{if $publication->getLocalizedSubtitle()}
+			{if $submission->getLocalizedSubtitle()}
 				<span class="subtitle">
-					{$publication->getLocalizedSubtitle()|escape}
+					{$submission->getLocalizedSubtitle()|escape}
 				</span>
 			{/if}
 		</a>

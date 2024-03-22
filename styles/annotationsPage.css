@@ -26,6 +26,14 @@
     text-decoration: none;
 }
 
+.submission_annotations .title .subtitle {
+    display: block;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    font-weight: 400;
+    color: rgba(0,0,0,0.54);
+}
+
 .meta {
     padding-top: 5px;
     font-size: 14px;
