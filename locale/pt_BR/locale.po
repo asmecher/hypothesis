@@ -18,3 +18,27 @@ msgstr ""
 
 msgid "plugins.generic.hypothesis.name"
 msgstr "Plugin Hypothes.is"
+
+msgid "plugins.generic.hypothesis.annotation"
+msgstr "anotação"
+
+msgid "plugins.generic.hypothesis.annotations"
+msgstr "anotações"
+
+msgid "plugins.generic.hypothesis.annotationsPage"
+msgstr "Anotações"
+
+msgid "plugins.generic.hypothesis.annotationsPageNumber"
+msgstr "Anotações - Página {$pageNumber}"
+
+msgid "plugins.generic.hypothesis.noSubmissionsWithAnnotations"
+msgstr "Não há submissões com anotações"
+
+msgid "plugins.generic.hypothesis.orderBy"
+msgstr "Ordenar por:"
+
+msgid "plugins.generic.hypothesis.orderBy.datePublished"
+msgstr "Data de postagem"
+
+msgid "plugins.generic.hypothesis.orderBy.lastAnnotation"
+msgstr "Data da última anotação"
