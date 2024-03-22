@@ -72,6 +72,7 @@ class HypothesisPlugin extends GenericPlugin {
 		// template path contains the plugin path, and ends with the tpl file
 		if ( (strpos($template, $plugin) !== false) && (  (strpos($template, ':'.$submissiontpl,  -1 - strlen($submissiontpl)) !== false)  ||  (strpos($template, ':'.$issuetpl,  -1 - strlen($issuetpl)) !== false))) {
 			$templateMgr->registerFilter("output", array($this, 'changePdfjsPath'));
+			$templateMgr->registerFilter("output", array($this, 'addHypothesisConfig'));
 		}
 		return false;
 	}
@@ -85,6 +86,23 @@ class HypothesisPlugin extends GenericPlugin {
 	function changePdfjsPath($output, $templateMgr) {
 		$newOutput = str_replace('pdfJsViewer/pdf.js/web/viewer.html?file=', 'hypothesis/pdf.js/viewer/web/viewer.html?file=', $output);
 		return $newOutput;
+	}
+
+	/**
+	 * Adds Hypothesis tab configuration so sidebar opens automatically when PDF has annotations
+	 * @param $output string
+	 * @param $templateMgr TemplateManager
+	 * @return $string
+	 */
+	public function addHypothesisConfig($output, $templateMgr) {
+		if (preg_match('/<div[^>]+id="pdfCanvasContainer/', $output, $matches, PREG_OFFSET_CAPTURE)) {
+            $posMatch = $matches[0][1];
+			$config = $templateMgr->fetch($this->getTemplateResource('hypothesisConfig.tpl'));
+
+            $output = substr_replace($output, $config, $posMatch, 0);
+            $templateMgr->unregisterFilter('output', array($this, 'addHypothesisConfig'));
+        }
+		return $output;
 	}
 
 	public function addAnnotationNumberViewers($hookName, $args) {
