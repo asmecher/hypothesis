@@ -154,11 +154,15 @@ class HypothesisPlugin extends GenericPlugin {
 	public function addHandlerURLToJavaScript()
 	{
 		$request = Application::get()->getRequest();
-		$templateMgr = TemplateManager::getManager($request);
-		$handlerUrl = $request->getDispatcher()->url($request, ROUTE_COMPONENT, null, 'plugins.generic.hypothesis.controllers.HypothesisHandler');
-		$data = ['hypothesisHandlerUrl' => $handlerUrl];
+		$context = $request->getContext();
 
-		$templateMgr->addJavaScript('HypothesisHandler', 'app = ' . json_encode($data) . ';', ['contexts' => 'frontend', 'inline' => true]);
+		if ($context) {
+			$templateMgr = TemplateManager::getManager($request);
+			$handlerUrl = $request->getDispatcher()->url($request, ROUTE_COMPONENT, null, 'plugins.generic.hypothesis.controllers.HypothesisHandler');
+			$data = ['hypothesisHandlerUrl' => $handlerUrl];
+	
+			$templateMgr->addJavaScript('HypothesisHandler', 'app = ' . json_encode($data) . ';', ['contexts' => 'frontend', 'inline' => true]);
+		}
 	}
 
 	/**
