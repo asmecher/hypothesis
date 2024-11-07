@@ -122,7 +122,7 @@ class HypothesisPlugin extends GenericPlugin {
 
 			$templateMgr->addJavascript('AddAnnotationViewers', $jsUrl, ['contexts' => 'frontend']);
 			$templateMgr->addStyleSheet('AnnotationViewerStyleSheet', $styleUrl, ['contexts' => 'frontend']);
-        }
+		}
 
 		return false;
 	}
