@@ -1,0 +1,89 @@
+#orderSubmissions {
+    margin-bottom: 1rem;
+}
+
+#selectOrderSubmissions {
+    background: #FFF;
+    border: 1px solid rgba(0,0,0,0.4);
+    border-radius: 3px;
+    font-size: 0.93rem;
+    height: calc(2.143rem - 2px);
+}
+
+.submission_annotations {
+    background-color: #fafaf8;
+    padding: 10px 15px;
+    border-radius: 3px;
+}
+
+.submission_annotations .title {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+}
+
+.submission_annotations .title a {
+    text-decoration: none;
+}
+
+.submission_annotations .title .subtitle {
+    display: block;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    font-weight: 400;
+    color: rgba(0,0,0,0.54);
+}
+
+.meta {
+    padding-top: 5px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.meta > .authors {
+    padding-right: 5em;
+}
+
+.meta > .published, .meta > .doi {
+    color: rgba(0,0,0,0.54);
+}
+
+.annotation {
+    background-color: #FFF;
+    font-size: 14px;
+    margin: 10px 0 0 15px;
+    padding: 14px;
+    border-radius: 3px;
+    box-shadow: 0px 2px 3px 0 rgba(0,0,0,0.2);
+}
+
+.annotation_header span {
+    color: rgba(0,0,0,0.54);
+    margin-left: 8px;
+    float: right;
+}
+
+.annotation_target {
+    font-style: italic;
+    margin: 1em 0;
+    padding: 0 1em;
+    color: rgba(0,0,0,0.54);
+}
+
+.annotation_target blockquote, .annotation_content blockquote {
+    margin-bottom: 4px;
+}
+
+.read_more, .read_less {
+    padding: 3px 6px;
+    border: 1px solid #007bff;
+    border-radius: 14px;
+    color: #007bff;
+    background-color: #FFF;
+    line-height: 20px;
+    font-weight: 700;
+}
+
+.hide {
+    display: none;
+}

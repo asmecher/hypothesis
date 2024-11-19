@@ -1,0 +1,30 @@
+.obj_article_details .galleys_links li {
+    margin-right: 0.25em;
+}
+
+.obj_article_details .galleys_links .annotation_viewer {
+    margin-top: 0.5em;
+}
+
+.obj_article_summary .galleys_links .annotation_viewer {
+    margin: 0;
+}
+
+.annotation_viewer.hidden_viewer {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+
+.annotation_viewer > a {
+    padding: 4px 8px;
+    border: 1px solid rgba(0,0,0,0.54);
+    border-radius: 15px;
+    color: rgba(0,0,0,0.54);
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.annotation_viewer > a:hover {
+    color: rgba(0,0,0,0.54);
+}
