@@ -72,7 +72,7 @@ class HypothesisPlugin extends GenericPlugin {
 	 * Output filter to create a new element in a registration form
 	 * @param $output string
 	 * @param $templateMgr TemplateManager
-	 * @return $string
+	 * @return string
 	 */
 	function changePdfjsPath($output, $templateMgr) {
 		$newOutput = str_replace('pdfJsViewer/pdf.js/web/viewer.html?file=', 'hypothesis/pdf.js/viewer/web/viewer.html?file=', $output);
