@@ -49,6 +49,10 @@ class HypothesisHelper {
             }
         }
 
+		if ($currentRequest != $requestPrefix) {
+			$requests[] = $currentRequest;
+		}
+
         return $requests;
     }
 
