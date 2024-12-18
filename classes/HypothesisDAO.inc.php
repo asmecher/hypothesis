@@ -20,4 +20,17 @@ class HypothesisDAO extends DAO {
 
 		return get_object_vars($result)['date_published'];
 	}
+
+	public function getSubmissionIdByBestId($submissionBestId): int {
+		$result = Capsule::table('publications')
+			->where('url_path', $submissionBestId)
+			->select('submission_id')
+			->first();
+
+		if (!is_null($result)) {
+			return (int) get_object_vars($result)['submission_id'];
+		}
+
+		return (int) $submissionBestId;
+	}
 }

@@ -1,7 +1,8 @@
 <?php
 
-import('plugins.generic.hypothesis.classes.SubmissionAnnotations');
 import('classes.submission.Submission');
+import('plugins.generic.hypothesis.classes.SubmissionAnnotations');
+import('plugins.generic.hypothesis.classes.HypothesisDAO');
 
 class HypothesisHelper {
 	public function getSubmissionsAnnotations($contextId) {
@@ -44,6 +45,10 @@ class HypothesisHelper {
 			}
 		}
 
+		if ($currentRequest != $requestPrefix) {
+			$requests[] = $currentRequest;
+		}
+
 		return $requests;
 	}
 
@@ -58,6 +63,7 @@ class HypothesisHelper {
 		foreach ($galleys as $galley) {
 			if ($galley->getFileType() == 'application/pdf') {
 				$galleyDownloadURL = $this->getGalleyDownloadURL($contextId, $submission, $galley);
+				
 				if(!is_null($galleyDownloadURL)) {
 					$submissionRequestParams .= "&uri={$galleyDownloadURL}";
 				}
@@ -78,10 +84,12 @@ class HypothesisHelper {
 
 	private function groupSubmissionsAnnotations($groupResponse) {
 		$submissionsAnnotations = [];
+		$hypothesisDao = new HypothesisDAO();
 
 		foreach ($groupResponse['rows'] as $annotationResponse) {
 			$urlBySlash = explode("/", $annotationResponse['links']['incontext']);
-			$submissionId = (int) $urlBySlash[count($urlBySlash) - 3];
+			$submissionBestId = $urlBySlash[count($urlBySlash) - 3];
+			$submissionId = $hypothesisDao->getSubmissionIdByBestId($submissionBestId);
 
 			if(!array_key_exists($submissionId, $submissionsAnnotations)) {
 				$submissionsAnnotations[$submissionId] = new SubmissionAnnotations($submissionId);
